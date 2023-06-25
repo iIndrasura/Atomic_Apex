@@ -67,29 +67,28 @@ void readConfig(std::map<std::string, std::string>& config) {
 
 /* ------------------ START OFFSETS ------------------ */
 
-int m_iHealth = 0x043c;							//RecvTable.DT_Player.m_iHealth
-int m_iTeamNum = 0x044c;						//RecvTable.DT_BaseEntity.m_iTeamNum
-int m_iViewAngles = 0x25bc - 0x14;				//m_ammoPoolCapacity - 0x14
-int m_iCameraAngles = 0x1c70 + 0x2EC;			//m_zoomFullStartTime + 0x2EC
-int m_bZooming = 0x1c61;						//m_bZooming
-int m_iBoneMatrix = 0x0e98 + 0x50 - 0x8;		//m_nForceBone + 0x50 - 0x8
-int m_iWeapon = 0x1a24;							//m_latestPrimaryWeapons
-int m_vecAbsOrigin = 0x014c;					//DataMap.CBaseViewModel.m_vecAbsOrigin
-int m_playerData = 0x16c0;						//RecvTable.DT_WeaponX.m_playerData
-int m_lifeState = 0x0798;						//RecvTable.DT_Player.m_lifeState
-int m_itemId = 0x1648;							//RecvTable.DT_PropSurvival.m_customScriptInt
-int m_gameMode = 0x02173850;					//mp_gamemode
-int m_localplayer = 0x0213a640+ 0x8;			//.?AVC_GameMovement@@ + 0x8)
-int m_sensitivity = 0x02126ae0;					//mouse_sensitivity
-int m_bulletSpeed = 0x1F50;						//CWeaponX!m_flProjectileSpeed        or        WeaponSettingsMeta.base + WeaponSettings.projectile_launch_speed
-int m_bulletGravity = m_bulletSpeed + 0x8;		//CWeaponX!m_flProjectileSpeed + 0x8
-int m_muzzle = 0x1f58;							//CPlayer!camera_origin
-int m_iObserverMode = 0x34ec;					//m_iObserverMode
-                                                 //
-                                                 //
-#define in_Attack 0x07404610					//[Buttons] -> in_attack
+int m_iHealth = 0x043c;                             //RecvTable.DT_Player.m_iHealth
+int m_iTeamNum = 0x044c;                         //RecvTable.DT_BaseEntity.m_iTeamNum
+int m_iViewAngles = 0x25b4 - 0x14;               //m_ammoPoolCapacity - 0x14
+int m_iCameraAngles = 0x1c60 + 0x2EC;            //m_zoomFullStartTime + 0x2EC
+int m_bZooming = 0x1c51;                         //m_bZooming
+int m_iBoneMatrix = 0x0e98 + 0x50 - 0x8;         //m_nForceBone + 0x50 - 0x8
+int m_iWeapon = 0x1a14;                          //m_latestPrimaryWeapons
+int m_vecAbsOrigin = 0x014c;                     //DataMap.CBaseViewModel.m_vecAbsOrigin
+int m_playerData = 0x16b0;                       //RecvTable.DT_WeaponX.m_playerData
+int m_lifeState = 0x0798;                        //RecvTable.DT_Player.m_lifeState
+int m_itemId = 0x1638;                           //RecvTable.DT_PropSurvival.m_customScriptInt
+int m_gameMode = 0x0223c7e0;                     //mp_gamemode
+int m_localplayer = 0x022036C0 + 0x8;            //.?AVC_GameMovement@@ + 0x8) ???
+int m_sensitivity = 0x021efa40;                  //mouse_sensitivity
+int m_bulletSpeed = 0x1F9c;                      //CWeaponX!m_flProjectileSpeed        or        WeaponSettingsMeta.base + WeaponSettings.projectile_launch_speed
+int m_bulletGravity = m_bulletSpeed + 0x8;       //CWeaponX!m_flProjectileSpeed + 0x8
+int m_muzzle = 0x1f50;                           //CPlayer!camera_origin
+int m_iObserverMode = 0x34f4;                    //m_iObserverMode
+
+#define in_Attack 0x0743d3b0                     //[Buttons] -> in_attack
 #define m_bleedoutState 0x2750
-//#define OFFSET_YAW 0x22c4						//m_currentFramePlayer.m_ammoPoolCount 
+//#define OFFSET_YAW 0x22c4                      //m_currentFramePlayer.m_ammoPoolCount
 
 
 /* ------------------ END OFFSETS OFFSETS ------------------ */
@@ -398,7 +397,7 @@ int main(void)
 		{
 			vis_time = vis_time + 0x10;
 			dwVisibleTime = rx_read_i32(r5apex, vis_time + 0x4);
-			 dwVisibleTime = 0x1A80;	//lastVisibleTime
+			 dwVisibleTime = 0x1A70;	//lastVisibleTime
 		}
 	}
 
@@ -656,7 +655,8 @@ int main(void)
 					// 
 					rx_write_float(r5apex, entity + 0x3B4, 99999999.0f); // glow distance
 
-					if (rx_read_i32(r5apex, entity + 0x0170) <= 10)
+					// Health based glow...
+					/*if (rx_read_i32(r5apex, entity + 0x0170) <= 10)
 					{
 						// green - VERY LOW SHIELD
 						rx_write_float(r5apex, entity + 0x1D0, 0.0f);
@@ -731,7 +731,7 @@ int main(void)
 						rx_write_float(r5apex, entity + 0x1D0, 255.0f);
 						rx_write_float(r5apex, entity + 0x1D4, 0.0f);
 						rx_write_float(r5apex, entity + 0x1D8, 0.0f);
-					}
+					}*/
 				}
 			}
 		}
