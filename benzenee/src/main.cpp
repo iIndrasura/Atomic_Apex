@@ -79,16 +79,16 @@ int m_vecAbsOrigin = 0x014c;                     //DataMap.CBaseViewModel.m_vecA
 int m_playerData = 0x16b0;                       //RecvTable.DT_WeaponX.m_playerData
 int m_lifeState = 0x0798;                        //RecvTable.DT_Player.m_lifeState
 int m_itemId = 0x1638;                           //RecvTable.DT_PropSurvival.m_customScriptInt
-int m_gameMode = 0x0223c7e0;                     //mp_gamemode
-int m_localplayer = 0x22036C0 + 0x8;            //.?AVC_GameMovement@@ + 0x8)
-int m_sensitivity = 0x021efa40;                  //mouse_sensitivity
+int m_gameMode = 0x0223d990;                     //mp_gamemode
+int m_localplayer = 0x22048C0 + 0x8;            //.?AVC_GameMovement@@ + 0x8)
+int m_sensitivity = 0x021f0c20;                  //mouse_sensitivity
 int m_bulletSpeed = 0x1F3C;                      //CWeaponX!m_flProjectileSpeed        or        WeaponSettingsMeta.base + WeaponSettings.projectile_launch_speed
 int m_bulletGravity = m_bulletSpeed + 0x8;       //CWeaponX!m_flProjectileSpeed + 0x8
 int m_muzzle = 0x1f50;                           //CPlayer!camera_origin
 int m_iObserverMode = 0x34f4;                    //m_iObserverMode
 
 
-#define in_Attack 0x0743d330                     //[Buttons] -> in_attack
+#define in_Attack 0x0743e510                     //[Buttons] -> in_attack
 #define m_bleedoutState 0x2750
 //#define OFFSET_YAW 0x22c4                      //m_currentFramePlayer.m_ammoPoolCount
 
