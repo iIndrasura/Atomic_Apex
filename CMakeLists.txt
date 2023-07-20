@@ -1,3 +1,3 @@
 cmake_minimum_required(VERSION 2.6)
 add_subdirectory(rx)
-add_subdirectory(proton_apex)
+add_subdirectory(benzenee)

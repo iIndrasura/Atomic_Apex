@@ -1,9 +1,8 @@
-# Proton-Apex_Linux_Cheat
- 
-Credit to original owner: https://github.com/iIndrasura/Proton-Apex_linux_Cheat.git
-  
-git clone https://github.com/iIndrasura/Proton-Apex_linux_Cheat.git --recursive  
-cd proton_apex  
+Credit to original owner: https://github.com/ekknod/benzenee
+
+# benzenee  
+git clone https://github.com/luizpalazzo/benzenee --recursive  
+cd benzenee  
 ./run  
 
 #new features added by me

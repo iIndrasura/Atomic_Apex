@@ -3,4 +3,4 @@ cd build
 cmake ..
 make -j8
 cd ..
-sudo ./build/proton_apex/proton_apex
+sudo ./build/benzenee/benzenee

@@ -39,7 +39,6 @@ void readConfig(std::map<std::string, std::string>& config) {
         config["AIMBOT_ENABLED"] = "1";
         config["SLEEP"] = "15";
         config["MAXDISTANCE"] = "160.0";
-		config["BONE_LIST"] = "2,3,5,8";
 
         std::ofstream newConfigFile("config.cfg");
         if (newConfigFile) {
@@ -85,6 +84,8 @@ int m_bulletSpeed = 0x1F9c;                      //CWeaponX!m_flProjectileSpeed 
 int m_bulletGravity = m_bulletSpeed + 0x8;       //CWeaponX!m_flProjectileSpeed + 0x8
 int m_muzzle = 0x1f50;                           //CPlayer!camera_origin
 int m_iObserverMode = 0x34f4;                    //m_iObserverMode
+
+
 
 #define in_Attack 0x0743d3b0                     //[Buttons] -> in_attack
 #define m_bleedoutState 0x2750
@@ -275,18 +276,6 @@ int main(void)
     #define AIMBOT_ENABLED std::stoi(config["AIMBOT_ENABLED"])
     std::chrono::milliseconds sleep(std::stoi(config["SLEEP"]));
     float maxdistance = std::stof(config["MAXDISTANCE"]);
-	
-	// Parse bone_list configuration
-	std::string boneListStr = config["BONE_LIST"];
-	std::vector<int> boneList;
-	std::istringstream iss(boneListStr);
-	std::string bone;
-	while (std::getline(iss, bone, ',')) {
-		boneList.push_back(std::stoi(bone));
-		}
-
-	int bone_list[boneList.size()];
-	std::copy(boneList.begin(), boneList.end(), bone_list);
 
 	int pid = GetApexProcessId();
 
@@ -771,11 +760,12 @@ int main(void)
 
 			//printf(" Continue ");
 
+			// prediction
 			vec3 target_angle = {0, 0, 0};
 			float fov = 360.0f;
 			// alteration hitbox
 			// int bone_list[] = {2, 3, 5, 8};
-			//int bone_list[] = {5,5,5,5}; // chest
+			int bone_list[] = {5,5,5,5}; // chest
 
 			vec3 breath_angles;
 			rx_read_process(r5apex, localplayer + m_iViewAngles - 0x10, &breath_angles, sizeof(vec3));
