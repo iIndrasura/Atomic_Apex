@@ -657,8 +657,8 @@ int main(void)
 					target_entity = entity;
 					lastvis_aim[i] = last_visible;
 
-					// 
-					rx_write_float(r5apex, entity + 0x3B4, 99999999.0f); // glow distance
+					//
+					rx_write_float(r5apex, entity + 0x3E4, 99999999.0f); // glow distance
 
 					// Health based glow...
 					/*if (rx_read_i32(r5apex, entity + 0x0170) <= 10)
