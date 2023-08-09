@@ -68,28 +68,28 @@ void readConfig(std::map<std::string, std::string>& config) {
 
 /* ------------------ START OFFSETS ------------------ */
 
-int m_iHealth = 0x043c;                          //RecvTable.DT_Player.m_iHealth
-int m_iTeamNum = 0x044c;                         //RecvTable.DT_BaseEntity.m_iTeamNum
-int m_iViewAngles = 0x25b4 - 0x14;               //m_ammoPoolCapacity - 0x14
-int m_iCameraAngles = 0x1c60 + 0x2EC;            //m_zoomFullStartTime + 0x2EC
-int m_bZooming = 0x1c51;                         //m_bZooming
-int m_iBoneMatrix = 0x0e98 + 0x50 - 0x8;         //m_nForceBone + 0x50 - 0x8
-int m_iWeapon = 0x1a14;                           //m_latestPrimaryWeapons
-int m_vecAbsOrigin = 0x014c;                     //DataMap.CBaseViewModel.m_vecAbsOrigin
-int m_playerData = 0x16b0;                       //RecvTable.DT_WeaponX.m_playerData
-int m_lifeState = 0x0798;                        //RecvTable.DT_Player.m_lifeState
-int m_itemId = 0x1638;                           //RecvTable.DT_PropSurvival.m_customScriptInt
-int m_gameMode = 0x0223d990;                     //mp_gamemode
-int m_localplayer = 0x22048C0 + 0x8;            //.?AVC_GameMovement@@ + 0x8)
-int m_sensitivity = 0x021f0c20;                  //mouse_sensitivity
-int m_bulletSpeed = 0x1F3C;                      //CWeaponX!m_flProjectileSpeed        or        WeaponSettingsMeta.base + WeaponSettings.projectile_launch_speed
+int m_iHealth = 0x0470;                          //RecvTable.DT_Player.m_iHealth
+int m_iTeamNum = 0x0480;                         //RecvTable.DT_BaseEntity.m_iTeamNum
+int m_iViewAngles = 0x25e4 - 0x14;               //m_ammoPoolCapacity - 0x14
+int m_iCameraAngles = 0x1c90 + 0x2EC;            //m_zoomFullStartTime + 0x2EC
+int m_bZooming = 0x1c81;                         //m_bZooming
+int m_iBoneMatrix = 0x0ec8 + 0x50 - 0x8;         //m_nForceBone + 0x50 - 0x8
+int m_iWeapon = 0x1a44;                      	 //m_latestPrimaryWeapons
+int m_vecAbsOrigin = 0x017c;                     //DataMap.CBaseViewModel.m_vecAbsOrigin
+int m_playerData = 0x16e0;                       //RecvTable.DT_WeaponX.m_playerData
+int m_lifeState = 0x07d0;                        //RecvTable.DT_Player.m_lifeState
+int m_itemId = 0x1668;                           //RecvTable.DT_PropSurvival.m_customScriptInt
+int m_gameMode = 0x0225d3a0;                     //mp_gamemode
+int m_localplayer = 0x2224528;            	 //.?AVC_GameMovement@@ + 0x8)
+int m_sensitivity = 0x02210650;                  //mouse_sensitivity
+int m_bulletSpeed = 0x1F6C;                      //CWeaponX!m_flProjectileSpeed        or        WeaponSettingsMeta.base + WeaponSettings.projectile_launch_speed
 int m_bulletGravity = m_bulletSpeed + 0x8;       //CWeaponX!m_flProjectileSpeed + 0x8
-int m_muzzle = 0x1f50;                           //CPlayer!camera_origin
-int m_iObserverMode = 0x34f4;                    //m_iObserverMode
+int m_muzzle = 0x1f80;                           //CPlayer!camera_origin
+int m_iObserverMode = 0x3534;                    //m_iObserverMode
 
 
-#define in_Attack 0x0743e510                     //[Buttons] -> in_attack
-#define m_bleedoutState 0x2750
+#define in_Attack 0x07472e98                    //[Buttons] -> in_attack
+#define m_bleedoutState 0x2790
 //#define OFFSET_YAW 0x22c4                      //m_currentFramePlayer.m_ammoPoolCount
 
 
@@ -402,7 +402,7 @@ int main(void)
 		{
 			vis_time = vis_time + 0x10;
 			dwVisibleTime = rx_read_i32(r5apex, vis_time + 0x4);
-			 dwVisibleTime = 0x1a70;	//lastVisibleTime
+			 dwVisibleTime = 0x1aa0;	//lastVisibleTime - [WeaponSettingsMeta].Base
 		}
 	}
 
@@ -636,9 +636,9 @@ int main(void)
 
 			float last_visible = rx_read_float(r5apex, entity + dwVisibleTime);
 			// glow enable
-			rx_write_i32(r5apex, entity + 0x2C4, 1512990053);
-			rx_write_i32(r5apex, entity + 0x3c8, 1);
-			rx_write_i32(r5apex, entity + 0x3d0, 2);
+			rx_write_i32(r5apex, entity + 0x2F4, 1512990053);
+			rx_write_i32(r5apex, entity + 0x3F8, 1);
+			rx_write_i32(r5apex, entity + 0x400, 2);
 			
 			if (last_visible != 0.00f)
 			{
@@ -646,9 +646,9 @@ int main(void)
 				float fov = get_fov(breath_angles, target_angle);
 
 				//set default glow color - white
-				//rx_write_float(r5apex, entity + 0x1D0, 5.0f);	//Red
-				//rx_write_float(r5apex, entity + 0x1D4, 5.0f);	//Green
-				rx_write_float(r5apex, entity + 0x1D8, 100.0f);	//Blue
+				//rx_write_float(r5apex, entity + 0x200, 5.0f);	//Red
+				//rx_write_float(r5apex, entity + 0x204, 5.0f);	//Green
+				rx_write_float(r5apex, entity + 0x208, 100.0f);	//Blue
 				
 				if (fov < target_fov && last_visible > lastvis_aim[i]) // i think this if is not working, always false
 				{
@@ -783,7 +783,7 @@ int main(void)
 			// alteration hitbox
 			// int bone_list[] = {2, 3, 5, 8};
 			//int bone_list[] = {5,5,5,5}; // chest
-			
+
 			vec3 breath_angles;
 			rx_read_process(r5apex, localplayer + m_iViewAngles - 0x10, &breath_angles, sizeof(vec3));
 
@@ -917,45 +917,45 @@ int main(void)
 				switch (itemID)
 				{
 				//weapons
-				case 23: 	 // VK-47 Flatline
-				case 69:	 // R-301 Carbine
+				case 28: 	 // VK-47 Flatline
+				case 80:	 // R-301 Carbine
 				case 49: 	 // r99
-				case 90: 	 //wingman
-				case 89:	 //PK
-				//case 7:	 //L-Star
+				case 105: 	 //wingman
+				case 90:	 //PK
+				case 134:	 //Nemesis
 
 				//shields
 				//case 175: // Evo Shield 2
-				case 182: // Evo Shield 3
-				case 183: // Evo Shield 4
+				case 199: // Evo Shield 3
+				case 200: // Evo Shield 4
 				//case 170: // Shield 2
-				case 178: // Shield 3
-				case 179: // Shield 4
+				case 194: // Shield 3
+				case 195: // Shield 4
 
 				//helmets
 				//case 166: // Helmet 2
-				case 172: // Helmet 3
-				case 173: // Helmet 4
+				case 189: // Helmet 3
+				case 190: // Helmet 4
 
 				//backpacks
-				case 190: // Backpack 2
-				case 191: // Backpack 3
-				case 192: // Backpack 4
+				case 207: // Backpack 2
+				case 208: // Backpack 3
+				case 209: // Backpack 4
 
 				//attachments
 				//case 222: //Extended Sniper Mag 3
 				//case 223: //Extended Sniper Mag 4
-				case 216: //Extended Light Mag 3
-				case 217: //Extended Light Mag 4
-				case 224: //Energy Magazine 3
-				case 225: //Energy Magazine 4
-				case 220: //Heavy Magazine 3
-				case 221: //Heavy Magazine 4
+				case 233: //Extended Light Mag 3
+				case 234: //Extended Light Mag 4
+				case 241: //Energy Magazine 3
+				case 242: //Energy Magazine 4
+				case 237: //Heavy Magazine 3
+				case 238: //Heavy Magazine 4
 				//case 203: //Barrel Stabilizer 3
 				//case 204: //Barrel Stabilizer 4
 				//case 232: //Sniper Stock 3
-				case 232: //Shotgun Bolt 3
-				case 233: //Shotgun Bolt 4
+				case 249: //Shotgun Bolt 3
+				case 250: //Shotgun Bolt 4
 
 				//scopes
 				//case 197: //1x HCOG Classic
@@ -964,26 +964,27 @@ int main(void)
 				//case 199: //4x-8x Variable Sniper
 
 				//miscellaneous
-				case 188: //Knockdown Shield 4
-				case 168: //Shield Battery
-				case 169: //Shile Cell
-				case 242: //Skullpiercer
-				case 244: //Hammerpoint
-				//case 258: //Treasure Box
+				case 205: //Knockdown Shield 4
+				case 185: //Shield Battery
+				case 186: //Shield Cell
+				case 4: //Disruptor Rounds
+				case 5: //Hammerpoint
+				case 25: //Vault Key
+				//case 273: //Treasure Box
 				
-					rx_write_i32(r5apex, entity + 0x02c0, 1363184265);
+					rx_write_i32(r5apex, entity + 0x2F0, 1363184265);
 					break;
 				}
 
 
-			if (itemID == 27 || itemID == 73 || itemID == 43 || itemID == 83 || itemID == 98) 
+			if (itemID == 28 || itemID == 80 || itemID == 49 || itemID == 105 || itemID == 90 || itemID == 134) 
                 {
-                    rx_write_i32(r5apex, entity + 0x3C8, 1);
-                    rx_write_i32(r5apex, entity + 0x3D0, 2);
-                    rx_write_i32(r5apex, entity + 0x2C4, 1512990053);
-                    rx_write_float(r5apex, entity + 0x1D0, 61.f);
-                    rx_write_float(r5apex, entity + 0x1D4, 2.f);
-                    rx_write_float(r5apex, entity + 0x1D8, 2.f);
+                    rx_write_i32(r5apex, entity + 0x3F8, 1);
+                    rx_write_i32(r5apex, entity + 0x400, 2);
+                    rx_write_i32(r5apex, entity + 0x2F4, 1512990053);
+                    rx_write_float(r5apex, entity + 0x200, 61.f);
+                    rx_write_float(r5apex, entity + 0x204, 2.f);
+                    rx_write_float(r5apex, entity + 0x208, 2.f);
  
  
                 }
