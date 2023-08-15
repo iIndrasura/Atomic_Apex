@@ -13,6 +13,10 @@
 #include <map>
 #include <vector>
 
+//#include <X11/Xlib.h>
+//#include <X11/extensions/XTest.h>
+//#include <unistd.h>
+
 
 /* ------------------ START CONFIGURATIONS ------------------ */
 
@@ -27,6 +31,8 @@ std::chrono::milliseconds sleep(15); 	// aim assist sleep time in miliseconds, i
 float maxdistance = 160.0f;				// aim assist maximum range in meters
 */
 
+/*
+// config file format config.cfg
 void readConfig(std::map<std::string, std::string>& config) {
     std::ifstream configFile("config.cfg");
     if (!configFile) {
@@ -35,6 +41,7 @@ void readConfig(std::map<std::string, std::string>& config) {
         config["AIMKEY2"] = "110";
         config["AIMFOV_ADS"] = "2.4";
         config["AIMFOV_HIPFIRE"] = "8.4";
+		config["AIMFOV_DEADZONE"] = "0.8";
         config["AIMSMOOTH"] = "19.4";
         config["ITEM_ESP"] = "1";
         config["AIMBOT_ENABLED"] = "1";
@@ -58,6 +65,79 @@ void readConfig(std::map<std::string, std::string>& config) {
                 std::string key = line.substr(0, equalPos);
                 std::string value = line.substr(equalPos + 1);
                 config[key] = value;
+            }
+        }
+    }
+}
+*/
+
+//config file format config.ini
+void readConfig(std::map<std::string, std::string>& config) {
+    std::ifstream configFile("config.ini");
+    if (!configFile) {
+        std::cout << "Config file not found. Creating a new one with default values." << std::endl;
+
+        config["AIMKEY.AIMKEY"] = "107";
+        config["AIMKEY.AIMKEY2"] = "108";
+		config["ESP.ITEM_ESP_TOGGLE"] = "110";
+        config["AIMFOV.AIMFOV_ADS"] = "2.4";
+        config["AIMFOV.AIMFOV_HIPFIRE"] = "8.4";
+        config["AIMFOV.AIMFOV_DEADZONE"] = "0.8";
+        config["AIMBOT.AIMSMOOTH"] = "19.4";
+		//config["TRIGGERBOT.TRIGGER_KEY"] = "111";
+        config["ESP.ITEM_ESP"] = "1";
+        config["AIMBOT.AIMBOT_ENABLED"] = "1";
+		//config["TRIGGERBOT.TRIGGER_ENABLED"] = "1";
+        config["AIMBOT.SLEEP"] = "15";
+        config["AIMBOT.MAXDISTANCE"] = "160.0";
+		//config["TRIGGERBOT.TRIGGER_RANGE"] = "60.0";
+        config["AIMBOT.BONE_LIST"] = "2,3,5,8";
+		config["MISC.FAKEDUCK"] = "1";  // fakeDuck 
+		config["MISC.FAKEDUCK_KEY"] = "80";
+
+        std::ofstream newConfigFile("config.ini");
+        if (newConfigFile) {
+            newConfigFile << "[AIMBOT]" << std::endl;
+            newConfigFile << "AIMBOT_ENABLED=1" << std::endl;
+            newConfigFile << "AIMSMOOTH=19.4" << std::endl;
+            newConfigFile << "BONE_LIST=2,3,5,8" << std::endl;
+            newConfigFile << "MAXDISTANCE=160.0" << std::endl;
+            newConfigFile << "SLEEP=15" << std::endl;
+            newConfigFile << "[AIMFOV]" << std::endl;
+            newConfigFile << "AIMFOV_ADS=2.4" << std::endl;
+            newConfigFile << "AIMFOV_HIPFIRE=8.4" << std::endl;
+            newConfigFile << "AIMFOV_DEADZONE=0.8" << std::endl;
+            newConfigFile << "[AIMKEY]" << std::endl;
+            newConfigFile << "AIMKEY=107" << std::endl;
+            newConfigFile << "AIMKEY2=108" << std::endl;
+			//newConfigFile << "[TRIGGERBOT]" << std::endl;
+			//newConfigFile << "TRIGGER_ENABLED=1" << std::endl;
+			//newConfigFile << "TRIGGER_KEY=111" << std::endl;
+			//newConfigFile << "TRIGGER_RANGE=60.0" << std::endl;
+            newConfigFile << "[ESP]" << std::endl;
+            newConfigFile << "ITEM_ESP=1" << std::endl;
+			newConfigFile << "ITEM_ESP_TOGGLE=110" << std::endl;
+			newConfigFile << "[MISC]" << std::endl;
+			newConfigFile << "FAKEDUCK=1" << std::endl;
+			newConfigFile << "FAKEDUCK_KEY=80" << std::endl;
+        } else {
+            std::cout << "Error creating config file." << std::endl;
+        }
+    } else {
+        std::string section;
+        std::string line;
+        while (std::getline(configFile, line)) {
+            if (line.empty() || line[0] == ';') {
+                continue; // Ignore empty lines and comments
+            } else if (line[0] == '[' && line.back() == ']') {
+                section = line.substr(1, line.size() - 2);
+            } else {
+                size_t equalPos = line.find('=');
+                if (equalPos != std::string::npos) {
+                    std::string key = section + "." + line.substr(0, equalPos);
+                    std::string value = line.substr(equalPos + 1);
+                    config[key] = value;
+                }
             }
         }
     }
@@ -86,6 +166,9 @@ int m_bulletSpeed = 0x1F6C;                      //CWeaponX!m_flProjectileSpeed 
 int m_bulletGravity = m_bulletSpeed + 0x8;       //CWeaponX!m_flProjectileSpeed + 0x8
 int m_muzzle = 0x1f80;                           //CPlayer!camera_origin
 int m_iObserverMode = 0x3534;                    //m_iObserverMode
+
+int host_timescale=0x017b7f60;					// ConVars_host_timescale for FakeDuck
+//int in_jump=0x07472fa8;							// Bhop Buttons_in_jump
 
 
 #define in_Attack 0x07472e98                    //[Buttons] -> in_attack
@@ -262,16 +345,41 @@ int dump_table(rx_handle game_process, QWORD table, const char *name)
 	return 0;
 }
 
+// deadzone vec3
+vec3 ApplyDeadzone(vec3 target_angle, float deadzoneX, float deadzoneY) 
+{
+    float x = target_angle.x;
+    float y = target_angle.y;
+
+    // Apply deadzone logic
+    if (abs(x) < deadzoneX) {
+        x = 0.0f;
+    }
+
+    if (abs(y) < deadzoneY) {
+        y = 0.0f;
+    }
+
+    vec3 result;
+    result.x = x;
+    result.y = y;
+    result.z = 0.0f;
+
+    return result;
+}
+
 int main(void)
 {
 	std::map<std::string, std::string> config;
 	readConfig(config);
 
     // Convert the configuration values to the desired types
+	/*
     #define AIMKEY std::stoi(config["AIMKEY"])
     #define AIMKEY2 std::stoi(config["AIMKEY2"])
     #define AIMFOV_ADS std::stof(config["AIMFOV_ADS"])
     #define AIMFOV_HIPFIRE std::stof(config["AIMFOV_HIPFIRE"])
+	#define AIMFOV_DEADZONE std::stof(config["AIMFOV_DEADZONE"])
     #define AIMSMOOTH std::stof(config["AIMSMOOTH"])
     #define ITEM_ESP std::stoi(config["ITEM_ESP"])
     #define AIMBOT_ENABLED std::stoi(config["AIMBOT_ENABLED"])
@@ -291,7 +399,41 @@ int main(void)
 	for (size_t i = 0; i < boneList.size(); ++i) {
 		bone_list[i] = boneList[i];
 		}
-	
+	*/
+
+    #define AIMKEY std::stoi(config["AIMKEY.AIMKEY"])
+    #define AIMKEY2 std::stoi(config["AIMKEY.AIMKEY2"])
+	//#define TRIGGER_KEY std::stoi(config["TRIGGERBOT.TRIGGER_KEY"])
+	#define ITEM_ESP_TOGGLE std::stoi(config["ESP.ITEM_ESP_TOGGLE"])
+    #define AIMFOV_ADS std::stof(config["AIMFOV.AIMFOV_ADS"])
+    #define AIMFOV_HIPFIRE std::stof(config["AIMFOV.AIMFOV_HIPFIRE"])
+    #define AIMFOV_DEADZONE std::stof(config["AIMFOV.AIMFOV_DEADZONE"])
+    #define AIMSMOOTH std::stof(config["AIMBOT.AIMSMOOTH"])
+    #define ITEM_ESP std::stoi(config["ESP.ITEM_ESP"])
+	#define FAKEDUCK std::stoi(config["MISC.FAKEDUCK"]) // fakeDuck
+	#define FAKEDUCK_KEY std::stoi(config["MISC.FAKEDUCK_KEY"]) // fakeDuck
+    #define AIMBOT_ENABLED std::stoi(config["AIMBOT.AIMBOT_ENABLED"])
+	//#define TRIGGER_ENABLED std::stoi(config["TRIGGERBOT.TRIGGER_ENABLED"])
+    std::chrono::milliseconds sleep(std::stoi(config["AIMBOT.SLEEP"]));
+    float maxdistance = std::stof(config["AIMBOT.MAXDISTANCE"]);
+	//float Trigger_distance = std::stof(config["TRIGGERBOT.TRIGGER_RANGE"]);
+
+	// Parse the bone_list configuration
+    std::vector<int> boneList;
+    std::istringstream boneStream(config["AIMBOT.BONE_LIST"]);
+    std::string bone;
+    while (std::getline(boneStream, bone, ',')) {
+        boneList.push_back(std::stoi(bone));
+    }
+
+	// Convert boneList to an array if needed
+    int bone_list[boneList.size()];
+    for (size_t i = 0; i < boneList.size(); ++i) {
+        bone_list[i] = boneList[i];
+    }
+
+
+	//
 
 	int pid = GetApexProcessId();
 
@@ -505,6 +647,7 @@ int main(void)
 	{
 		float fovAds = AIMFOV_ADS;
 		float fovHipfire = AIMFOV_HIPFIRE;
+		float fovdeadzone = AIMFOV_DEADZONE;
 		itemWorkaround++;
 		//printf("TESTEEEE -- %i",itemWorkaround);
 		
@@ -612,24 +755,24 @@ int main(void)
 				continue;
 			}
 
-			vec3 head = GetBonePosition(r5apex, entity, 2);
+			vec3 hitbox = GetBonePosition(r5apex, entity, 2);
 			
 
 			vec3 velocity;
 			rx_read_process(r5apex, entity + m_vecAbsOrigin - 0xC, &velocity, sizeof(vec3));
 
-			float fl_time = vec_distance(head, muzzle) / bulletSpeed;
-			head.z += (700.0f * bulletGravity * 0.5f) * (fl_time * fl_time);
+			float fl_time = vec_distance(hitbox, muzzle) / bulletSpeed;
+			hitbox.z += (700.0f * bulletGravity * 0.5f) * (fl_time * fl_time);
 
 			velocity.x = velocity.x * fl_time;
 			velocity.y = velocity.y * fl_time;
 			velocity.z = velocity.z * fl_time;
 
-			head.x += velocity.x;
-			head.y += velocity.y -40;
-			head.z += velocity.z;
+			hitbox.x += velocity.x;
+			hitbox.y += velocity.y -40;
+			hitbox.z += velocity.z;
 
-			vec3 target_angle = CalcAngle(muzzle, head);
+			vec3 target_angle = CalcAngle(muzzle, hitbox);
 			vec3 breath_angles;
 
 			rx_read_process(r5apex, localplayer + m_iViewAngles - 0x10, &breath_angles, sizeof(vec3));
@@ -740,6 +883,7 @@ int main(void)
 				}
 			}
 		}
+		
 
 		if (target_entity && (IsButtonDown(r5apex, IInputSystem, AIMKEY) || IsButtonDown(r5apex, IInputSystem, AIMKEY2)) && AIMBOT_ENABLED == 1)
 		{
@@ -756,7 +900,6 @@ int main(void)
 
 			rx_read_process(r5apex, localplayer + m_vecAbsOrigin, &local_position, sizeof(vec3));
 			rx_read_process(r5apex, target_entity + m_vecAbsOrigin, &enmPos, sizeof(vec3)); // enemy position
-
 
 
 			//enmPos.x = 31518;
@@ -789,24 +932,24 @@ int main(void)
 
 			for (int i = 0; i < 4; i++)
 			{
-				vec3 head = GetBonePosition(r5apex, target_entity, bone_list[i]);
+				vec3 hitbox = GetBonePosition(r5apex, target_entity, bone_list[i]);
 
 				vec3 velocity;
 				rx_read_process(r5apex, target_entity + m_vecAbsOrigin - 0xC, &velocity, sizeof(vec3));
 
-				float fl_time = vec_distance(head, muzzle) / bulletSpeed;
+				float fl_time = vec_distance(hitbox, muzzle) / bulletSpeed;
 
-				head.z += (700.0f * bulletGravity * 0.5f) * (fl_time * fl_time);
+				hitbox.z += (700.0f * bulletGravity * 0.5f) * (fl_time * fl_time);
 
 				velocity.x = velocity.x * fl_time;
 				velocity.y = velocity.y * fl_time;
 				velocity.z = velocity.z * fl_time;
 
-				head.x += velocity.x;
-				head.y += velocity.y;
-				head.z += velocity.z;
+				hitbox.x += velocity.x;
+				hitbox.y += velocity.y;
+				hitbox.z += velocity.z;
 
-				vec3 angle = CalcAngle(muzzle, head);
+				vec3 angle = CalcAngle(muzzle, hitbox);
 				float temp_fov = get_fov(breath_angles, angle);
 				if (temp_fov < fov)
 				{
@@ -827,6 +970,160 @@ int main(void)
 				fovAds = fovHipfire;
 			}
 
+
+
+			if (fov <= fovAds)
+			{
+
+				vec3 angles;
+				angles.x = breath_angles.x - target_angle.x;
+				angles.y = breath_angles.y - target_angle.y;
+				angles.z = 0;
+				vec_clamp(&angles);
+
+				angles = ApplyDeadzone(angles, fovdeadzone, fovdeadzone); // Apply deadzone logic using the defined fovdeadzone value
+
+				float x = angles.y;
+				float y = angles.x;
+				x = (x / fl_sensitivity) / 0.022f;
+				y = (y / fl_sensitivity) / -0.022f;
+
+				float sx = 0.0f, sy = 0.0f;
+
+				float smooth = AIMSMOOTH;
+
+				DWORD aim_ticks = 0;
+
+				if (smooth >= 1.0f)
+				{
+					if (sx < x)
+						sx = sx + 1.0f + (x / smooth);
+					else if (sx > x)
+						sx = sx - 1.0f + (x / smooth);
+					else
+						sx = x;
+
+					if (sy < y)
+						sy = sy + 1.0f + (y / smooth);
+					else if (sy > y)
+						sy = sy - 1.0f + (y / smooth);
+					else
+						sy = y;
+					aim_ticks = (DWORD)(smooth / 100.0f);
+				}
+				else
+				{
+					sx = x;
+					sy = y;
+				}
+
+				if (qabs((int)sx) > 100)
+					continue;
+
+				if (qabs((int)sy) > 100)
+					continue;
+
+				DWORD current_tick = rx_read_i32(r5apex, IInputSystem + 0xcd8);
+				if (current_tick - previous_tick > aim_ticks)
+				{
+					previous_tick = current_tick;
+					typedef struct
+					{
+						int x, y;
+					} mouse_data;
+					mouse_data data;
+
+					data.x = (int)sx;
+					data.y = (int)sy;
+					rx_write_process(r5apex, IInputSystem + 0x1DB0, &data, sizeof(data));
+					//printf(" x %i y %i",data.x,data.y);
+					std::this_thread::sleep_for(sleep);
+				}
+			}
+		}
+
+		/////////////////////////////////////////////////////
+
+		/*
+		if ( target_entity && TRIGGER_ENABLED == 1 && (IsButtonDown(r5apex, IInputSystem, TRIGGER_KEY) ))
+		{
+
+
+			
+			if (rx_read_i32(r5apex, target_entity + m_iHealth) == 0)
+				continue;
+			if (rx_read_i32(r5apex, target_entity + m_bleedoutState) > 0) // ignore knock
+				continue;
+			
+		
+			vec3 enmPos;
+
+			rx_read_process(r5apex, localplayer + m_vecAbsOrigin, &local_position, sizeof(vec3));
+			rx_read_process(r5apex, target_entity + m_vecAbsOrigin, &enmPos, sizeof(vec3)); // enemy position
+
+
+			float distance = ((CalcDistance(local_position, enmPos) / 100) * 2);   // need to verify
+			//printf("  	distance %f", ((CalcDistance(local_position, enmPos))/100)*2);
+			bool Triggerfar = (distance >= Trigger_distance);
+
+			if (Triggerfar)
+			{
+				//printf(" Cancelling ");
+				continue;
+			}
+
+			//printf(" Continue ");
+
+			// prediction
+			vec3 target_angle = {0, 0, 0};
+			float fov = 360.0f;
+			
+			// alteration hitbox
+			// int bone_list[] = {2, 3, 5, 8};
+			//int bone_list[] = {5,5,5,5}; // chest
+
+			vec3 breath_angles;
+			rx_read_process(r5apex, localplayer + m_iViewAngles - 0x10, &breath_angles, sizeof(vec3));
+
+			for (int i = 0; i < 4; i++)
+			{
+				vec3 hitbox = GetBonePosition(r5apex, target_entity, bone_list[i]);
+
+				vec3 velocity;
+				rx_read_process(r5apex, target_entity + m_vecAbsOrigin - 0xC, &velocity, sizeof(vec3));
+
+				float fl_time = vec_distance(hitbox, muzzle) / bulletSpeed;
+
+				hitbox.z += (700.0f * bulletGravity * 0.5f) * (fl_time * fl_time);
+
+				velocity.x = velocity.x * fl_time;
+				velocity.y = velocity.y * fl_time;
+				velocity.z = velocity.z * fl_time;
+
+				hitbox.x += velocity.x;
+				hitbox.y += velocity.y;
+				hitbox.z += velocity.z;
+
+				vec3 angle = CalcAngle(muzzle, hitbox);
+				float temp_fov = get_fov(breath_angles, angle);
+				if (temp_fov < fov)
+				{
+					fov = temp_fov;
+					target_angle = angle;
+				}
+			}
+
+			DWORD weapon_id = rx_read_i32(r5apex, localplayer + m_iWeapon) & 0xFFFF;
+			QWORD weapon = GetClientEntity(r5apex, IClientEntityList, weapon_id - 1);
+			float zoom_fov = rx_read_float(r5apex, weapon + m_playerData + 0xb8);
+
+			if (rx_read_i8(r5apex, localplayer + m_bZooming))
+			{
+				fl_sensitivity = (zoom_fov / 90.0f) * fl_sensitivity;
+				fovAds = AIMFOV_ADS;
+			}else{
+				fovAds = fovHipfire;
+			}
 
 
 			if (fov <= fovAds)
@@ -891,108 +1188,129 @@ int main(void)
 					data.x = (int)sx;
 					data.y = (int)sy;
 					rx_write_process(r5apex, IInputSystem + 0x1DB0, &data, sizeof(data));
-					//printf(" x %i y %i",data.x,data.y);
+
+                    Display *display = XOpenDisplay(NULL);
+                    if (display != NULL)
+                    {
+                        XTestFakeButtonEvent(display, Button1Mask, True, CurrentTime);
+                        XFlush(display);
+
+                        //std::this_thread::sleep_for(std::chrono::milliseconds(1)); // Sleep for 1 millisecond
+						usleep(1000);
+
+                        XTestFakeButtonEvent(display, Button1Mask, False, CurrentTime);
+                        XFlush(display);
+
+						XCloseDisplay(display);
+                    }
+
 					std::this_thread::sleep_for(sleep);
 				}
 			}
 		}
+		*/	
 
-		if(itemWorkaround > 5001){
-			itemWorkaround = 0;
-		}
 
+		/////////////////////////////////////////////////////
 		
-
-		//item glow
-		if (itemWorkaround == 5000 && ITEM_ESP == 1)
-		//printf("GLOW -- %i",itemWorkaround);
-		{
-			for (int k = 0; k < 10000; k++)
-			{
-				QWORD entity = GetClientEntity(r5apex, IClientEntityList, k);
-				itemID = rx_read_int(r5apex, entity + m_itemId);
-
-				//https://www.unknowncheats.me/forum/apex-legends/319804-apex-legends-reversal-structs-offsets-572.html
-
-				switch (itemID)
-				{
-				//weapons
-				case 28: 	 // VK-47 Flatline
-				case 80:	 // R-301 Carbine
-				case 49: 	 // r99
-				case 105: 	 //wingman
-				case 90:	 //PK
-				case 134:	 //Nemesis
-
-				//shields
-				//case 175: // Evo Shield 2
-				case 199: // Evo Shield 3
-				case 200: // Evo Shield 4
-				//case 170: // Shield 2
-				case 194: // Shield 3
-				case 195: // Shield 4
-
-				//helmets
-				//case 166: // Helmet 2
-				case 189: // Helmet 3
-				case 190: // Helmet 4
-
-				//backpacks
-				case 207: // Backpack 2
-				case 208: // Backpack 3
-				case 209: // Backpack 4
-
-				//attachments
-				//case 222: //Extended Sniper Mag 3
-				//case 223: //Extended Sniper Mag 4
-				case 233: //Extended Light Mag 3
-				case 234: //Extended Light Mag 4
-				case 241: //Energy Magazine 3
-				case 242: //Energy Magazine 4
-				case 237: //Heavy Magazine 3
-				case 238: //Heavy Magazine 4
-				//case 203: //Barrel Stabilizer 3
-				//case 204: //Barrel Stabilizer 4
-				//case 232: //Sniper Stock 3
-				case 249: //Shotgun Bolt 3
-				case 250: //Shotgun Bolt 4
-
-				//scopes
-				//case 197: //1x HCOG Classic
-				//case 198: //2x HCOG Bruiser
-				//case 197: //6x sniper
-				//case 199: //4x-8x Variable Sniper
-
-				//miscellaneous
-				case 205: //Knockdown Shield 4
-				case 185: //Shield Battery
-				case 186: //Shield Cell
-				case 4: //Disruptor Rounds
-				case 5: //Hammerpoint
-				case 25: //Vault Key
-				//case 273: //Treasure Box
-				
-					rx_write_i32(r5apex, entity + 0x2F0, 1363184265);
-					break;
+		// FakeDuck
+		if (FAKEDUCK == 1 && (IsButtonDown(r5apex, IInputSystem, FAKEDUCK_KEY))) {
+			rx_write_float(r5apex, + host_timescale + 0x68, 0.0f);
+			}
+			// FakeDuck OFF
+			else {
+				rx_write_float(r5apex, + host_timescale + 0x68, 1.0f);
 				}
 
+			
+			//item glow
+			if (itemWorkaround == 5000 && ITEM_ESP == 1 && (IsButtonDown(r5apex, IInputSystem, ITEM_ESP_TOGGLE)))
+			//printf("GLOW -- %i",itemWorkaround);
+			{
+				for (int k = 0; k < 10000; k++)
+				{
+					QWORD entity = GetClientEntity(r5apex, IClientEntityList, k);
+					itemID = rx_read_int(r5apex, entity + m_itemId);
 
-			if (itemID == 28 || itemID == 80 || itemID == 49 || itemID == 105 || itemID == 90 || itemID == 134) 
-                {
-                    rx_write_i32(r5apex, entity + 0x3F8, 1);
-                    rx_write_i32(r5apex, entity + 0x400, 2);
-                    rx_write_i32(r5apex, entity + 0x2F4, 1512990053);
-                    rx_write_float(r5apex, entity + 0x200, 61.f);
-                    rx_write_float(r5apex, entity + 0x204, 2.f);
-                    rx_write_float(r5apex, entity + 0x208, 2.f);
- 
- 
-                }
+					//https://www.unknowncheats.me/forum/apex-legends/319804-apex-legends-reversal-structs-offsets-572.html
+
+					switch (itemID)
+					{
+					//weapons
+					case 28: 	 // VK-47 Flatline
+					case 80:	 // R-301 Carbine
+					case 49: 	 // r99
+					case 105: 	 //wingman
+					case 90:	 //PK
+					case 134:	 //Nemesis
+
+					//shields
+					//case 175: // Evo Shield 2
+					case 199: // Evo Shield 3
+					case 200: // Evo Shield 4
+					//case 170: // Shield 2
+					case 194: // Shield 3
+					case 195: // Shield 4
+
+					//helmets
+					//case 166: // Helmet 2
+					case 189: // Helmet 3
+					case 190: // Helmet 4
+
+					//backpacks
+					case 207: // Backpack 2
+					case 208: // Backpack 3
+					case 209: // Backpack 4
+
+					//attachments
+					//case 222: //Extended Sniper Mag 3
+					//case 223: //Extended Sniper Mag 4
+					case 233: //Extended Light Mag 3
+					case 234: //Extended Light Mag 4
+					case 241: //Energy Magazine 3
+					case 242: //Energy Magazine 4
+					case 237: //Heavy Magazine 3
+					case 238: //Heavy Magazine 4
+					//case 203: //Barrel Stabilizer 3
+					//case 204: //Barrel Stabilizer 4
+					//case 232: //Sniper Stock 3
+					case 249: //Shotgun Bolt 3
+					case 250: //Shotgun Bolt 4
+
+					//scopes
+					//case 197: //1x HCOG Classic
+					//case 198: //2x HCOG Bruiser
+					//case 197: //6x sniper
+					//case 199: //4x-8x Variable Sniper
+
+					//miscellaneous
+					case 205: //Knockdown Shield 4
+					case 185: //Shield Battery
+					case 186: //Shield Cell
+					case 4: //Disruptor Rounds
+					case 5: //Hammerpoint
+					case 25: //Vault Key
+					//case 273: //Treasure Box
+					
+						rx_write_i32(r5apex, entity + 0x2F0, 1363184265);
+						break;
+					}
 
 
+				if (itemID == 28 || itemID == 80 || itemID == 49 || itemID == 105 || itemID == 90 || itemID == 134) 
+					{
+						rx_write_i32(r5apex, entity + 0x3F8, 1);
+						rx_write_i32(r5apex, entity + 0x400, 2);
+						rx_write_i32(r5apex, entity + 0x2F4, 1512990053);
+						rx_write_float(r5apex, entity + 0x200, 61.f);
+						rx_write_float(r5apex, entity + 0x204, 2.f);
+						rx_write_float(r5apex, entity + 0x208, 2.f);
+	
+					}
+				}
 			}
+			
 		}
-	}
 
 ON_EXIT:
 	rx_close_handle(r5apex);
