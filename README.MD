@@ -1,7 +1,5 @@
-Credit to original owner: https://github.com/ekknod/benzenee
-
 # benzenee  
-git clone https://github.com/luizpalazzo/benzenee --recursive  
+git clone url
 cd benzenee  
 ./run  
 
