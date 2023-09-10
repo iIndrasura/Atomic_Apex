@@ -9,6 +9,12 @@
 #include <fstream>
 #include <chrono>
 
+struct RGBValues {
+    float red = 0.0f;
+    float green = 0.0f;
+    float blue = 0.0f;
+};
+
 void readConfig(std::map<std::string, std::string>& config);
 //void readConfig(std::map<std::string, std::string>& config, std::vector<std::pair<std::string, std::map<std::string, bool>&>>& sections)
 
@@ -22,7 +28,9 @@ bool IsInLobaEspIds(int itemID, const std::vector<int>& lobaEspIds);
 //void parseConfigFile(std::map<int, int>& itemEspMap, std::map<int, int>& lobaEspMap, std::map<int, int>& filteredItemEspMap, std::map<int, int>& filteredLobaEspMap) {
 
 //void reloadConfigOnUpdate()
+/**/
 
+/*
 extern const float AIMSMOOTH;
 extern const int AIMBOT_ENABLED;
 extern const std::chrono::milliseconds AIMBOT_SLEEP;
@@ -92,3 +100,4 @@ extern const float INVISIBLE_BLUE_VALUE;
 //extern const float SQUARD_RED_VALUE;
 //extern const float SQUARD_GREEN_VALUE;
 //extern const float SQUARD_BLUE_VALUE;
+*/

@@ -31,6 +31,7 @@ void loadBar(){
     }
 
 	std::cout << RESET << std::endl;
+    //std::cout << "\t\t "<< BOLD << BG_MAGENTA << "I Am Atomic" << RESET << std::endl;
 }
 
 void displayConfigValues(const std::map<std::string, std::string>& config)  {
@@ -40,7 +41,7 @@ void displayConfigValues(const std::map<std::string, std::string>& config)  {
     std::cout << "populateing config values......" << RESET << std::endl;
 
     std::cout << FG_BLUE << "AIMBOT\t\t\t" << RESET << (std::stof(config.at("AIMBOT.AIMSMOOTH")) ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
-	std::cout << FG_BLUE << "TRIGGERBOT\t\t\t" << RESET << (std::stof(config.at("TRIGGERBOT.TRIGGER_ENABLED")) ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
+	std::cout << FG_BLUE << "TRIGGERBOT\t\t" << RESET << (std::stof(config.at("TRIGGERBOT.TRIGGER_ENABLED")) ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
 	std::cout << FG_BLUE << "NORECOIL\t\t" << RESET << (std::stof(config.at("NORECOIL.NORECOIL_ENABLED")) ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
 	std::cout << FG_BLUE << "NORECOIL2\t\t" << RESET << (std::stof(config.at("NORECOIL.NORECOIL2_ENABLED")) ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
 	std::cout << FG_BLUE << "GLOW\t\t\t" << RESET << (std::stof(config.at("GLOW.GLOW_ENABLED")) ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;

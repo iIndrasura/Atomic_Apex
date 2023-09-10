@@ -176,14 +176,7 @@ void parseConfigFile(std::map<int, int>& itemEspMap, std::map<int, int>& lobaEsp
 */
 
 // Function to split a string into components
-void splitString(const std::string& input, char delimiter, std::vector<std::string>& output) {
-    std::istringstream stream(input);
-    std::string token;
 
-    while (std::getline(stream, token, delimiter)) {
-        output.push_back(token);
-    }
-}
 
 bool IsInItemEspIds(int itemID, const std::vector<int>& itemEspIds) {
     return std::find(itemEspIds.begin(), itemEspIds.end(), itemID) != itemEspIds.end();
@@ -193,6 +186,14 @@ bool IsInLobaEspIds(int itemID, const std::vector<int>& lobaEspIds) {
     return std::find(lobaEspIds.begin(), lobaEspIds.end(), itemID) != lobaEspIds.end();
 }
 
+void splitString(const std::string& input, char delimiter, std::vector<std::string>& output) {
+    std::istringstream stream(input);
+    std::string token;
+
+    while (std::getline(stream, token, delimiter)) {
+        output.push_back(token);
+    }
+}
 
 /*
 void readConfigAndPopulateSectionMaps(std::map<std::string, std::string>& config,
@@ -231,11 +232,15 @@ void reloadConfigOnUpdate() {
 }
 */
 
+/*
 std::map<std::string, std::string> config;
 
 namespace {
     float stofConfig(const std::string& key) {
-        return std::stof(config[key]);
+        const std::string& valueStr = config[key];
+        return std::stof(valueStr);
+
+        //return std::stof(config[key]);
     }
 
     int stoiConfig(const std::string& key) {
@@ -250,6 +255,23 @@ namespace {
         return std::chrono::milliseconds(std::stoi(config[key]));
     }
 
+    std::vector<float> parseRGBColor(const std::string& configKey) {
+        std::vector<float> rgbComponents;
+
+        if (config.find(configKey) != config.end()) {
+            std::string rgbString = config[configKey];
+
+            // Parse the RGB components from the config value
+            std::istringstream iss(rgbString);
+            float component;
+            while (iss >> component) {
+                rgbComponents.push_back(component);
+            }
+        }
+
+        return rgbComponents;
+    }
+
     std::vector<int> parseIntegerList(const std::string& key) {
         std::vector<int> values;
         std::istringstream stream(config[key]);
@@ -258,12 +280,6 @@ namespace {
             values.push_back(std::stoi(value));
         }
         return values;
-    }
-
-    std::vector<std::string> parseRGBColor(const std::string& key) {
-        std::vector<std::string> components;
-        splitString(config[key], ',', components);
-        return components;
     }
 }
 
@@ -328,33 +344,34 @@ const std::vector<int> BONE_LIST = parseIntegerList("AIMBOT.BONE_LIST");
 const std::vector<int> ITEM_ESP_IDS = parseIntegerList("ESP.ITEM_ESP_IDS");
 const std::vector<int> LOBA_ESP_IDS = parseIntegerList("ESP.LOBA_ESP_IDS");
 
+
 // cham RGB color
-const std::vector<std::string> CHAMS_RGB_COMPONENTS = parseRGBColor("CHAMS.CHAMS_RGB");
-const float CHAMS_RED_VALUE = (CHAMS_RGB_COMPONENTS.size() == 3) ? stofConfig(CHAMS_RGB_COMPONENTS[0]) : 61.0f;
-const float CHAMS_GREEN_VALUE = (CHAMS_RGB_COMPONENTS.size() == 3) ? stofConfig(CHAMS_RGB_COMPONENTS[1]) : 2.0f;
-const float CHAMS_BLUE_VALUE = (CHAMS_RGB_COMPONENTS.size() == 3) ? stofConfig(CHAMS_RGB_COMPONENTS[2]) : 2.0f;
+const std::vector<float> CHAMS_RGB_COMPONENTS = parseRGBColor("CHAMS.CHAMS_RGB");
+const float CHAMS_RED_VALUE = (CHAMS_RGB_COMPONENTS.size() == 3) ? CHAMS_RGB_COMPONENTS[0] : 61.0f;
+const float CHAMS_GREEN_VALUE = (CHAMS_RGB_COMPONENTS.size() == 3) ? CHAMS_RGB_COMPONENTS[1] : 2.0f;
+const float CHAMS_BLUE_VALUE = (CHAMS_RGB_COMPONENTS.size() == 3) ? CHAMS_RGB_COMPONENTS[2] : 2.0f;
 
-// GLOW RGB
-//const std::vector<std::string> GLOW_RGB_COMPONENTS = parseRGBColor("GLOW.ENEMY_RGB");
-//const float GLOW_RED_VALUE = (GLOW_RGB_COMPONENTS.size() == 3) ? stofConfig(GLOW_RGB_COMPONENTS[0]) : 0.0f;
-//const float GLOW_GREEN_VALUE = (GLOW_RGB_COMPONENTS.size() == 3) ? stofConfig(GLOW_RGB_COMPONENTS[1]) : 100.0f;
-//const float GLOW_BLUE_VALUE = (GLOW_RGB_COMPONENTS.size() == 3) ? stofConfig(GLOW_RGB_COMPONENTS[2]) : 0.0f;
+// Glow RGB color for enemy
+//const std::vector<float> GLOW_RGB_COMPONENTS = parseRGBColor("GLOW.ENEMY_RGB");
+//const float GLOW_RED_VALUE = (GLOW_RGB_COMPONENTS.size() == 3) ? GLOW_RGB_COMPONENTS[0] : 0.0f;
+//const float GLOW_GREEN_VALUE = (GLOW_RGB_COMPONENTS.size() == 3) ? GLOW_RGB_COMPONENTS[1] : 100.0f;
+//const float GLOW_BLUE_VALUE = (GLOW_RGB_COMPONENTS.size() == 3) ? GLOW_RGB_COMPONENTS[2] : 0.0f;
 
+// Glow color for visible enemies
+const std::vector<float> ENEMY_VISIBLE_RGB_COMPONENTS = parseRGBColor("GLOW.ENEMY_VISIBLE");
+const float VISIBLE_RED_VALUE = (ENEMY_VISIBLE_RGB_COMPONENTS.size() == 3) ? ENEMY_VISIBLE_RGB_COMPONENTS[0] : 0.0f;
+const float VISIBLE_GREEN_VALUE = (ENEMY_VISIBLE_RGB_COMPONENTS.size() == 3) ? ENEMY_VISIBLE_RGB_COMPONENTS[1] : 60.0f;
+const float VISIBLE_BLUE_VALUE = (ENEMY_VISIBLE_RGB_COMPONENTS.size() == 3) ? ENEMY_VISIBLE_RGB_COMPONENTS[2] : 0.0f;
 
-// Glow Color for visible enemies
-const std::vector<std::string> ENEMY_VISIBLE_RGB_COMPONENTS = parseRGBColor("GLOW.ENEMY_VISIBLE");
-const float VISIBLE_RED_VALUE = (ENEMY_VISIBLE_RGB_COMPONENTS.size() == 3) ? stofConfig(ENEMY_VISIBLE_RGB_COMPONENTS[0]) : 0.0f;
-const float VISIBLE_GREEN_VALUE = (ENEMY_VISIBLE_RGB_COMPONENTS.size() == 3) ? stofConfig(ENEMY_VISIBLE_RGB_COMPONENTS[1]) : 60.0f;
-const float VISIBLE_BLUE_VALUE = (ENEMY_VISIBLE_RGB_COMPONENTS.size() == 3) ? stofConfig(ENEMY_VISIBLE_RGB_COMPONENTS[2]) : 0.0f;
+// Glow color for invisible enemies
+const std::vector<float> ENEMY_INVISIBLE_RGB_COMPONENTS = parseRGBColor("GLOW.ENEMY_inVISIBLE");
+const float INVISIBLE_RED_VALUE = (ENEMY_INVISIBLE_RGB_COMPONENTS.size() == 3) ? ENEMY_INVISIBLE_RGB_COMPONENTS[0] : 60.0f;
+const float INVISIBLE_GREEN_VALUE = (ENEMY_INVISIBLE_RGB_COMPONENTS.size() == 3) ? ENEMY_INVISIBLE_RGB_COMPONENTS[1] : 0.0f;
+const float INVISIBLE_BLUE_VALUE = (ENEMY_INVISIBLE_RGB_COMPONENTS.size() == 3) ? ENEMY_INVISIBLE_RGB_COMPONENTS[2] : 0.0f;
 
-// Glow Color for inVisible enemies
-const std::vector<std::string> ENEMY_INVISIBLE_RGB_COMPONENTS = parseRGBColor("GLOW.ENEMY_inVISIBLE");
-const float INVISIBLE_RED_VALUE = (ENEMY_INVISIBLE_RGB_COMPONENTS.size() == 3) ? stofConfig(ENEMY_INVISIBLE_RGB_COMPONENTS[0]) : 60.0f;
-const float INVISIBLE_GREEN_VALUE = (ENEMY_INVISIBLE_RGB_COMPONENTS.size() == 3) ? stofConfig(ENEMY_INVISIBLE_RGB_COMPONENTS[1]) : 0.0f;
-const float INVISIBLE_BLUE_VALUE = (ENEMY_INVISIBLE_RGB_COMPONENTS.size() == 3) ? stofConfig(ENEMY_INVISIBLE_RGB_COMPONENTS[2]) : 0.0f;
-
-// Glow Color for Squard enemies
-//const std::vector<std::string> SQUARD_RGB_COMPONENTS = parseRGBColor("GLOW.SQUARD_RGB");
-//const float SQUARD_RED_VALUE = (SQUARD_RGB_COMPONENTS.size() == 3) ? stofConfig(SQUARD_RGB_COMPONENTS[0]) : 50.0f;
-//const float SQUARD_GREEN_VALUE = (SQUARD_RGB_COMPONENTS.size() == 3) ? stofConfig(SQUARD_RGB_COMPONENTS[1]) : 50.0f;
-//const float SQUARD_BLUE_VALUE = (SQUARD_RGB_COMPONENTS.size() == 3) ? stofConfig(SQUARD_RGB_COMPONENTS[2]) : 0.0f;
+// Glow color for squad enemies
+//const std::vector<float> SQUAD_RGB_COMPONENTS = parseRGBColor("GLOW.SQUARD_RGB");
+//const float SQUARD_RED_VALUE = (SQUAD_RGB_COMPONENTS.size() == 3) ? SQUAD_RGB_COMPONENTS[0] : 50.0f;
+//const float SQUARD_GREEN_VALUE = (SQUAD_RGB_COMPONENTS.size() == 3) ? SQUAD_RGB_COMPONENTS[1] : 50.0f;
+//const float SQUARD_BLUE_VALUE = (SQUAD_RGB_COMPONENTS.size() == 3) ? SQUAD_RGB_COMPONENTS[2] : 0.0f;
+*/

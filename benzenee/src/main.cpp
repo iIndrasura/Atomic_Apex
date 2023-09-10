@@ -8,6 +8,7 @@
 #include "player.h"
 #include "localplayer.h"
 #include "menu.h"
+//#include "configValue.h"
 
 #include <iostream>
 #include <sstream>
@@ -75,10 +76,198 @@ int main(void)
 	//Read Config.ini File
 	std::map<std::string, std::string> config;
 	readConfig(config);
+
+	#define AIMSMOOTH std::stof(config["AIMBOT.AIMSMOOTH"])
+	#define AIMBOT_ENABLED std::stoi(config["AIMBOT.AIMBOT_ENABLED"])
+	std::chrono::milliseconds AIMBOT_SLEEP(std::stoi(config["AIMBOT.SLEEP"]));
+	float AIMBOT_MAXDISTANCE = std::stof(config["AIMBOT.MAXDISTANCE"]);
+
+	//AIM key
+	#define AIMKEY std::stoi(config["AIMKEY.AIMKEY"])
+	#define AIMKEY2 std::stoi(config["AIMKEY.AIMKEY2"])
+
+	//Aim FOV
+	#define AIMFOV_ADS std::stof(config["AIMFOV.AIMFOV_ADS"])
+	#define AIMFOV_HIPFIRE std::stof(config["AIMFOV.AIMFOV_HIPFIRE"])
+	#define AIMFOV_DEADZONE std::stof(config["AIMFOV.AIMFOV_DEADZONE"])
+
+	//NO Recoil
+	#define NORECOIL_ENABLED std::stoi(config["NORECOIL.NORECOIL_ENABLED"])
+	#define NORECOIL2_ENABLED std::stoi(config["NORECOIL.NORECOIL2_ENABLED"])
+	float NORECOIL_STRENGTH = std::stof(config["NORECOIL.NORECOIL_STRENGTH"]);
+	double norecoilPitchStrength = std::stod(config["NORECOIL.PitchStrength"]); // vertical anti-recoil strength  
+	double norecoilYawStrength = std::stod(config["NORECOIL.YawStrength"]);     // Horizontal anti-recoil strength
+
+	//Trigger bot
+	#define TRIGGER_ENABLED std::stoi(config["TRIGGERBOT.TRIGGER_ENABLED"])
+	//#define TRIGGER2_ENABLED std::stoi(config["TRIGGERBOT.TRIGGER2_ENABLED"])
+	#define TRIGGER_KEY std::stoi(config["TRIGGERBOT.TRIGGER_KEY"])
+	//float Trigger_distance = std::stof(config["TRIGGERBOT.TRIGGER_RANGE"]);
+
+	//GLOW
+	#define GLOW_ENABLED std::stoi(config["GLOW.GLOW_ENABLED"])
+	#define GLOW_ENEMY std::stoi(config["GLOW.GLOW_ENEMY"]) // 
+	//#define GLOW_SQUARD std::stoi(config["GLOW.GLOW_SQUARD"])
+	#define GLOW_HEALTH std::stoi(config["GLOW.GLOW_HEALTH"])
+	//float max_glowdistance = std::stof(config["GLOW.GLOW_RANGE"]);
+
+
+	//ESP and ITEM ESP
+	#define ITEM_ESP_ENABLED std::stoi(config["ESP.ITEM_ESP_ENABLED"])
+	#define ITEM_ESP std::stoi(config["ESP.ITEM_ESP"])
+	#define LOBA_ESP std::stoi(config["ESP.LOBA_ESP"])
+	//#define itemESP_toggle_key std::stoi(config["ESP.ITEM_ESP_TOGGLE"])
+
+	//Chams
+	#define WEAPON_CHAMS std::stoi(config["CHAMS.WEAPON_CHAMS"])
+	#define ARMS_CHAMS std::stoi(config["CHAMS.ARMS_CHAMS"])
+	int8_t CHAM_BORDER = std::stoi(config["CHAMS.CHAM_BORDER"]);
+
+	//Misc
+	//#define FAKEDUCK std::stoi(config["MISC.FAKEDUCK"]) // fakeDuck
+	//#define FAKEDUCK_KEY std::stoi(config["MISC.FAKEDUCK_KEY"]) // fakeDuck
+	#define MAP_RADAR std::stoi(config["MISC.MAP_RADAR"])
+	#define TAPSTRAFE std::stoi(config["MISC.BHOP"])
+	#define AUTO_GRAPPLE std::stoi(config["MISC.AUTO_GRAPPLE"])
+	#define SPEC_COUNT std::stoi(config["MISC.SPECTATOR_COUNT"])
+
+	/*
+    std::vector<int> boneList;
+    std::istringstream boneStream(config["AIMBOT.BONE_LIST"]);
+    std::string bone;
+    while (std::getline(boneStream, bone, ',')) {
+        boneList.push_back(std::stoi(bone));
+    }
+
+	// Convert boneList to an array if needed
+    int bone_list[boneList.size()];
+    for (size_t i = 0; i < boneList.size(); ++i) {
+        bone_list[i] = boneList[i];
+    }
+	*/
+
+	// Bone List ---------------------------------------------
+	std::vector<int> BONE_LIST;
+    std::istringstream boneStream(config["AIMBOT.BONE_LIST"]);
+    std::string bone;
+    while (std::getline(boneStream, bone, ',')) {
+        BONE_LIST.push_back(std::stoi(bone));
+    }
+
+	//Item ESP IDs ---------------------------------------------
+	std::vector<int> itemEspIds;
+    std::istringstream itemEspStream(config["ESP.ITEM_ESP_IDS"]);
+    std::string itemId;
+    while (std::getline(itemEspStream, itemId, ',')) {
+        itemEspIds.push_back(std::stoi(itemId));
+    }
+
+	//loba ESP IDs ---------------------------------------------
+	std::vector<int> lobaEspIds;
+    std::istringstream lobaEspStream(config["ESP.LOBA_ESP_IDS"]);
+    std::string lobaId;
+    while (std::getline(lobaEspStream, lobaId, ',')) {
+        lobaEspIds.push_back(std::stoi(lobaId));
+    }
+
+	// cham RGB color ---------------------------------------------
+    std::string chamRgbValue = config["CHAMS.CHAMS_RGB"];
+	std::vector<std::string> chamRgbComponents;
+	splitString(chamRgbValue, ',', chamRgbComponents);
+
+	float CHAMS_RED_VALUE = 61.0f;   // Default values
+	float CHAMS_GREEN_VALUE = 2.0f;
+	float CHAMS_BLUE_VALUE = 2.0f;
+
+	if (chamRgbComponents.size() == 3) {
+		CHAMS_RED_VALUE = std::stof(chamRgbComponents[0]);
+		CHAMS_GREEN_VALUE = std::stof(chamRgbComponents[1]);
+		CHAMS_BLUE_VALUE = std::stof(chamRgbComponents[2]);
+	} else {
+		std::cout << "Invalid CHAM_RGB value in config." << std::endl;
+		// Default values are already set
+	}
+
+	// GLOW RGB --------------------------------------------- 
+	/*
+	// Glow color when there was no Visible check
+	std::string glowEnemyRgbValue = config["GLOW.ENEMY_RGB"];
+	std::vector<std::string> glowRgbComponents;
+	splitString(glowEnemyRgbValue, ',', glowRgbComponents);
+
+	float glow_redValue = 0.0f;    // Default values
+	float glow_greenValue = 100.0f;
+	float glow_blueValue = 0.0f;
+
+	if (glowRgbComponents.size() == 3) {
+		glow_redValue = std::stof(glowRgbComponents[0]);
+		glow_greenValue = std::stof(glowRgbComponents[1]);
+		glow_blueValue = std::stof(glowRgbComponents[2]);
+	} else {
+		std::cout << "Invalid Visible color value in config." << std::endl;
+		// Default values are already set
+	}
+	*/
+
+	// Glow Color for visible enemies
+	std::string visibleEnemyRgbValue = config["GLOW.ENEMY_VISIBLE"];
+	std::vector<std::string> visibleRgbComponents;
+	splitString(visibleEnemyRgbValue, ',', visibleRgbComponents);
+
+	float VISIBLE_RED_VALUE = 0.0f;    // Default values
+	float VISIBLE_GREEN_VALUE = 60.0f;
+	float VISIBLE_BLUE_VALUE = 0.0f;
+
+	if (visibleRgbComponents.size() == 3) {
+		VISIBLE_RED_VALUE = std::stof(visibleRgbComponents[0]);
+		VISIBLE_GREEN_VALUE = std::stof(visibleRgbComponents[1]);
+		VISIBLE_BLUE_VALUE = std::stof(visibleRgbComponents[2]);
+	} else {
+		std::cout << "Invalid Visible color value in config." << std::endl;
+		// Default values are already set
+	}
+
+	// Glow Color for inVisible enemies
+	std::string invisibleEnemyRgbValue = config["GLOW.ENEMY_inVISIBLE"];
+	std::vector<std::string> invisibleRgbComponents;
+	splitString(invisibleEnemyRgbValue, ',', invisibleRgbComponents);
+
+	float INVISIBLE_RED_VALUE = 60.0f;    // Default values
+	float INVISIBLE_GREEN_VALUE = 0.0f;
+	float INVISIBLE_BLUE_VALUE = 0.0f;
+
+	if (invisibleRgbComponents.size() == 3) {
+		INVISIBLE_RED_VALUE = std::stof(invisibleRgbComponents[0]);
+		INVISIBLE_GREEN_VALUE = std::stof(invisibleRgbComponents[1]);
+		INVISIBLE_BLUE_VALUE = std::stof(invisibleRgbComponents[2]);
+	} else {
+		std::cout << "Invalid inVisible color value in config." << std::endl;
+		// Default values are already set
+	}
+
+	/*
+	// Glow Color for Squard enemies
+	std::string squardRgbValue = config["GLOW.SQUARD_RGB"];
+	std::vector<std::string> squardRgbComponents;
+	splitString(squardRgbValue, ',', squardRgbComponents);
+
+	float squard_redValue = 50.0f;    // Default values
+	float squard_greenValue = 50.0f;
+	float squard_blueValue = 0.0f;
+
+	if (squardRgbComponents.size() == 3) {
+		squard_redValue = std::stof(squardRgbComponents[0]);
+		squard_greenValue = std::stof(squardRgbComponents[1]);
+		squard_blueValue = std::stof(squardRgbComponents[2]);
+	} else {
+		std::cout << "Invalid Squard RGB color value in config." << std::endl;
+		// Default values are already set
+	}
+	*/
 	
 	/* ------------------ Terminal Output ------------------ */
-	void displayHeader();		//Heading
-	void loadBar();				//Loading bar
+	displayHeader();		//Heading
+	loadBar();				//Loading bar
 
 	/* ------------------ Initialize temporary/local Value ------------------ */
 	// Recoil Control Values
@@ -348,7 +537,7 @@ int main(void)
 	*/
 	
 	// Terminal Menu display boolean values of config
-	void displayConfigValues(const std::map<std::string, std::string>& config);
+	displayConfigValues(config);
 
 
 	while (1)
@@ -1409,7 +1598,7 @@ int main(void)
 				itemID = rx_read_int(r5apex, entity + OFFSETS::m_itemId);
 
 				// Apply ITEM_ESP settings only if ITEM_ESP is enabled and itemID is in ITEM_ESP_IDS
-				if (ITEM_ESP == 1 && IsInItemEspIds(itemID, ITEM_ESP_IDS)) {
+				if (ITEM_ESP == 1 && IsInItemEspIds(itemID, itemEspIds)) {
 					rx_write_i32(r5apex, entity + 0x3F8, 1);
 					rx_write_i32(r5apex, entity + 0x400, 2);
 					rx_write_i32(r5apex, entity + 0x2F4, 1512990053);
@@ -1419,7 +1608,7 @@ int main(void)
 				}
 
 				// Apply LOBA_ESP settings only if LOBA_ESP is enabled and itemID is in LOBA_ESP_IDS
-				if (LOBA_ESP == 1 && IsInLobaEspIds(itemID, LOBA_ESP_IDS)) {
+				if (LOBA_ESP == 1 && IsInLobaEspIds(itemID, lobaEspIds)) {
 					//rx_write_i32(r5apex, entity + 0x292, 16256);
 					//rx_write_i32(r5apex, entity + 0x30c, 1193322764);
 					rx_write_i32(r5apex, entity + 0x2F0, 1363184265);
