@@ -9,7 +9,7 @@ add_library ( ${OUT} ${LINKTYPE}
     src/rx_handle.c src/rx_input.c src/rx_list.c src/rx_module.c src/rx_process.c )
 
 set_target_properties(${OUT} PROPERTIES LINKER_LANGUAGE C)
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Wall -DNDEBUG -Wno-format-truncation -O2 -s -lpthread")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Wall -DNDEBUG -Wno-format-truncation -O3 -s -lpthread")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wno-format-truncation")
 
 if (NOT CMAKE_BUILD_TYPE)

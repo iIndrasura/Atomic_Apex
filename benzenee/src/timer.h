@@ -1,5 +1,6 @@
     #ifndef TIMER_H
     #define TIMER_H
+	
      
     #include <chrono>
      
@@ -24,6 +25,13 @@
     	{
     		tStart = std::chrono::high_resolution_clock::now();
     	}
+
+		// High Resolution clock for time stamps and to delay a process in MilliSeconds
+		uintptr_t GetMs() {
+			using namespace std::chrono;
+			milliseconds ms = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+			return static_cast<uintptr_t>(ms.count());
+		}
     };
      
     #endif
