@@ -118,7 +118,7 @@ bool LocalPlayer::isKnocked(rx_handle process) {
     return result > 0;
 }
 
-bool LocalPlayer::isDead(rx_handle process) {
+bool LocalPlayer::isAlive(rx_handle process) {
     QWORD basePointer = getBasePointer(process);
     QWORD ptrLong = basePointer + OFFSETS::LIFE_STATE;
     short result = rx_read_i32(process, ptrLong);

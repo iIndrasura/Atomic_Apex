@@ -1,0 +1,38 @@
+    Input class: 48 8B 05 ? ? ? ? 48 8D 0D ? ? ? ? FF 90 ? ? ? ? 48 8B 05 ? ? ? ? F3 0F 10 48 ? F3 0F 5C C8 0F 57 C0 0F 2F C8 76 15 48 8B 05 ? ? ? ? F3 0F 10 40 ? 0F 2F C1 0F 87 ? ? ? ? 48 8B CB
+    EngineTraceClient: 74 2D 4C 8B 0D ? ? ? ? + 2
+    GlobalVars: 48 8D 15 ? ? ? ? 48 89 0D ? ? ? ? FF 10
+    ClientState: 48 8B 05 ? ? ? ? 48 8D 15 ? ? ? ? 48 8D 0D ? ? ? ? FF 50 50 B8 ? ? ? ?
+     
+    LocalPlayer: 48 8B 05 ? ? ? ? 48 8D 0D ? ? ? ? 44 88 2D ? ? ? ? + 0x8
+    EntityList: 4C 8D 3D ? ? ? ? 48 85 ED
+    ViewRender: 48 8B 0D ? ? ? ? 48 8B 01 F3 0F 10 8B ? ? ? ?
+
+    SendNetMsg: 48 89 5C 24 ? 48 89 6C 24 ? 48 89 74 24 ? 57 41 56 41 57 48 83 EC 50 83 B9 ? ? ? ? ? 41 0F B6 E9 41 0F B6 F0 4C 8B FA 48 8B
+    NET_SignonState: 48 8D 05 ? ? ? ? C6 44 24 ? ? 48 8D 54 24 ? 48 89 44 24 ? 89 5C 24 28 48 89
+
+    IClientEntityList = vm::scan_pattern_direct(apex_handle, apex_base, "\x4C\x8B\x15\x00\x00\x00\x00\x33\xF6", "xxx????xx", 9);
+    C_BasePlayer = vm::scan_pattern_direct(apex_handle, apex_base, "\x89\x41\x28\x48\x8B\x05\x00\x00\x00\x00\x48\x85\xC0", "xxxxxx????xxx", 13);
+     
+    IInputSystem = vm::scan_pattern_direct(apex_handle, apex_base,
+    		"\x48\x8B\x05\x00\x00\x00\x00\x48\x8D\x4C\x24\x20\xBA\x01\x00\x00\x00\xC7", "xxx????xxxxxxxxxxx", 18);
+     
+    m_GetAllClasses = vm::scan_pattern_direct(apex_handle, apex_base,
+    		"\x48\x8B\x05\x00\x00\x00\x00\xC3\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\x48\x89\x74\x24\x20", "xxx????xxxxxxxxxxxxxx", 21);
+     
+     
+    (bullet speed / gravity) temp_address = vm::scan_pattern_direct(apex_handle, apex_base, "\x75\x0F\xF3\x44\x0F\x10\xBF", "xxxxxxx", 7);
+     
+    ( dwMuzzle ) temp_address = vm::scan_pattern_direct(apex_handle, apex_base,
+    			"\xF3\x0F\x10\x91\x00\x00\x00\x00\x48\x8D\x04\x40", "xxxx????xxxx", 12);
+     
+    (dwVisibleTime ) temp_address = vm::scan_pattern_direct(apex_handle, apex_base,
+    			"\x48\x8B\xCE\x00\x00\x00\x00\x00\x84\xC0\x0F\x84\xBA\x00\x00\x00", "xxx?????xxxxxxxx", 16);
+
+
+    	const long commands_ptr = 0x14220D6D0;  // 48 8D 0D ?? ?? ?? ?? FF 90 ?? ?? ?? ?? 84 C0 4D 0F 44 E7
+    	const long sequence_number = 0x14170896C;   // 8B 2D ?? ?? ?? ?? 8B 35 ?? ?? ?? ?? 48 85 C0
+    	const long tmp_ptr1 = 0x1416EFCB0; // 48 8B 0D ?? ?? ?? ?? 48 85 C9 74 74  
+    	const long server_time = 0x1415FA4D8;  // 48 8B 05 ?? ?? ?? ?? F3 0F 58 70 10
+    	const long bak2 = 0x1483201B0; // 44 8B 05 ?? ?? ?? ?? 33 C9 45 85 C0 7E 22
+    	const long bak4 = 0x1416EFD00; // F2 0F 10 05 ?? ?? ?? ?? F2 0F 58 0D
+    	const long bak5 = 0x14238C9F8; // F2 0F 58 0D ?? ?? ?? ?? 66

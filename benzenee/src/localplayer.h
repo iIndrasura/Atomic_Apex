@@ -49,7 +49,7 @@ public:
 
     bool isKnocked(rx_handle process);
 
-    bool isDead(rx_handle process);
+    bool isAlive(rx_handle process);
 
     bool isSkydiving(rx_handle process);
 

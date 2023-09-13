@@ -64,6 +64,9 @@ namespace OFFSETS
 
     const long spec_YAW = 0x22ec - 0x8;                     //m_currentFramePlayer.m_ammoPoolCount - 0x8
     const long SIGNIFIER_NAME = 0x05b8;             // [RecvTable.DT_BaseEntity]        -> m_iSignifierName
+
+    //LocalPlayer
+    const long nSKIN = 0x0e84;                        //int value  m_nSkin
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -100,6 +103,13 @@ namespace OFFSETS
     const long m_grappleActivateTime=0x0054;
 
     //Server time
-    const long server_time = 0x1415FA4D8;               // 48 8B 05 ?? ?? ?? ?? F3 0F 58 70 10
+    //const long server_time = 0x1415FA4D8;               // 48 8B 05 ?? ?? ?? ?? F3 0F 58 70 10
+
+        ////Glow
+    // #define OFFSET_GLOW_DISTANCE  0x3B4 + 0x30 //0x3E4
+    // #define OFFSET_GLOW_COLOR           0x200
+    // #define OFFSET_GLOW_TYPE                 0x2C4 + 0x30
+    // #define OFFSET_GLOW_CONTEXT          0x03f0 + 0x8 //7 = enabled, 2 = disabled
+    // #define OFFSET_GLOW_THROUGH_WALLS   0x400 //2 = enabled, 5 = disabled
 			
 }

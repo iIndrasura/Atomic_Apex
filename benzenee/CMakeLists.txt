@@ -12,6 +12,7 @@ add_executable ( ${OUT}
     src/player.cpp
     src/localplayer.cpp
     src/menu.cpp
+    src/configvalues.cpp
     )
 
 

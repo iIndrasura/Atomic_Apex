@@ -8,7 +8,7 @@
 #include "player.h"
 #include "localplayer.h"
 #include "menu.h"
-//#include "configValue.h"
+#include "configvalues.h"
 
 #include <iostream>
 #include <sstream>
@@ -55,7 +55,7 @@ int m_playerData = OFFSETS::PLAYER_DATA;
 int m_iBoneMatrix = OFFSETS::BONE_MATRIX;
 
 /* ------------------ Define default keycode ------------------ */
-#define bunny_key 110
+//#define bunny_key 110
 //#define auto_grapple_key 27
 //#define map_radar_toggle_key 40
 //#define ITEM_ESP_TOGGLE 26
@@ -68,206 +68,21 @@ int iTeamControl;
 int iLocControl;
 
 //constexpr int MAX_ENTITIES = 70;
+const float GAME_UNITS_TO_METERS = 0.01905f;
 
 /* ------------------ ------------------ ------------------ */
 
 int main(void)
 {
-	//Read Config.ini File
-	std::map<std::string, std::string> config;
-	readConfig(config);
+    std::map<std::string, std::string> config;
+    readConfig(config);
 
-	#define AIMSMOOTH std::stof(config["AIMBOT.AIMSMOOTH"])
-	#define AIMBOT_ENABLED std::stoi(config["AIMBOT.AIMBOT_ENABLED"])
-	std::chrono::milliseconds AIMBOT_SLEEP(std::stoi(config["AIMBOT.SLEEP"]));
-	float AIMBOT_MAXDISTANCE = std::stof(config["AIMBOT.MAXDISTANCE"]);
-
-	//AIM key
-	#define AIMKEY std::stoi(config["AIMKEY.AIMKEY"])
-	#define AIMKEY2 std::stoi(config["AIMKEY.AIMKEY2"])
-
-	//Aim FOV
-	#define AIMFOV_ADS std::stof(config["AIMFOV.AIMFOV_ADS"])
-	#define AIMFOV_HIPFIRE std::stof(config["AIMFOV.AIMFOV_HIPFIRE"])
-	#define AIMFOV_DEADZONE std::stof(config["AIMFOV.AIMFOV_DEADZONE"])
-
-	//NO Recoil
-	#define NORECOIL_ENABLED std::stoi(config["NORECOIL.NORECOIL_ENABLED"])
-	#define NORECOIL2_ENABLED std::stoi(config["NORECOIL.NORECOIL2_ENABLED"])
-	float NORECOIL_STRENGTH = std::stof(config["NORECOIL.NORECOIL_STRENGTH"]);
-	double norecoilPitchStrength = std::stod(config["NORECOIL.PitchStrength"]); // vertical anti-recoil strength  
-	double norecoilYawStrength = std::stod(config["NORECOIL.YawStrength"]);     // Horizontal anti-recoil strength
-
-	//Trigger bot
-	#define TRIGGER_ENABLED std::stoi(config["TRIGGERBOT.TRIGGER_ENABLED"])
-	//#define TRIGGER2_ENABLED std::stoi(config["TRIGGERBOT.TRIGGER2_ENABLED"])
-	#define TRIGGER_KEY std::stoi(config["TRIGGERBOT.TRIGGER_KEY"])
-	//float Trigger_distance = std::stof(config["TRIGGERBOT.TRIGGER_RANGE"]);
-
-	//GLOW
-	#define GLOW_ENABLED std::stoi(config["GLOW.GLOW_ENABLED"])
-	#define GLOW_ENEMY std::stoi(config["GLOW.GLOW_ENEMY"]) // 
-	//#define GLOW_SQUARD std::stoi(config["GLOW.GLOW_SQUARD"])
-	#define GLOW_HEALTH std::stoi(config["GLOW.GLOW_HEALTH"])
-	//float max_glowdistance = std::stof(config["GLOW.GLOW_RANGE"]);
-
-
-	//ESP and ITEM ESP
-	#define ITEM_ESP_ENABLED std::stoi(config["ESP.ITEM_ESP_ENABLED"])
-	#define ITEM_ESP std::stoi(config["ESP.ITEM_ESP"])
-	#define LOBA_ESP std::stoi(config["ESP.LOBA_ESP"])
-	//#define itemESP_toggle_key std::stoi(config["ESP.ITEM_ESP_TOGGLE"])
-
-	//Chams
-	#define WEAPON_CHAMS std::stoi(config["CHAMS.WEAPON_CHAMS"])
-	#define ARMS_CHAMS std::stoi(config["CHAMS.ARMS_CHAMS"])
-	int8_t CHAM_BORDER = std::stoi(config["CHAMS.CHAM_BORDER"]);
-
-	//Misc
-	//#define FAKEDUCK std::stoi(config["MISC.FAKEDUCK"]) // fakeDuck
-	//#define FAKEDUCK_KEY std::stoi(config["MISC.FAKEDUCK_KEY"]) // fakeDuck
-	#define MAP_RADAR std::stoi(config["MISC.MAP_RADAR"])
-	#define TAPSTRAFE std::stoi(config["MISC.BHOP"])
-	#define AUTO_GRAPPLE std::stoi(config["MISC.AUTO_GRAPPLE"])
-	#define SPEC_COUNT std::stoi(config["MISC.SPECTATOR_COUNT"])
-
-	/*
-    std::vector<int> boneList;
-    std::istringstream boneStream(config["AIMBOT.BONE_LIST"]);
-    std::string bone;
-    while (std::getline(boneStream, bone, ',')) {
-        boneList.push_back(std::stoi(bone));
-    }
-
-	// Convert boneList to an array if needed
-    int bone_list[boneList.size()];
-    for (size_t i = 0; i < boneList.size(); ++i) {
-        bone_list[i] = boneList[i];
-    }
-	*/
-
-	// Bone List ---------------------------------------------
-	std::vector<int> BONE_LIST;
-    std::istringstream boneStream(config["AIMBOT.BONE_LIST"]);
-    std::string bone;
-    while (std::getline(boneStream, bone, ',')) {
-        BONE_LIST.push_back(std::stoi(bone));
-    }
-
-	//Item ESP IDs ---------------------------------------------
-	std::vector<int> itemEspIds;
-    std::istringstream itemEspStream(config["ESP.ITEM_ESP_IDS"]);
-    std::string itemId;
-    while (std::getline(itemEspStream, itemId, ',')) {
-        itemEspIds.push_back(std::stoi(itemId));
-    }
-
-	//loba ESP IDs ---------------------------------------------
-	std::vector<int> lobaEspIds;
-    std::istringstream lobaEspStream(config["ESP.LOBA_ESP_IDS"]);
-    std::string lobaId;
-    while (std::getline(lobaEspStream, lobaId, ',')) {
-        lobaEspIds.push_back(std::stoi(lobaId));
-    }
-
-	// cham RGB color ---------------------------------------------
-    std::string chamRgbValue = config["CHAMS.CHAMS_RGB"];
-	std::vector<std::string> chamRgbComponents;
-	splitString(chamRgbValue, ',', chamRgbComponents);
-
-	float CHAMS_RED_VALUE = 61.0f;   // Default values
-	float CHAMS_GREEN_VALUE = 2.0f;
-	float CHAMS_BLUE_VALUE = 2.0f;
-
-	if (chamRgbComponents.size() == 3) {
-		CHAMS_RED_VALUE = std::stof(chamRgbComponents[0]);
-		CHAMS_GREEN_VALUE = std::stof(chamRgbComponents[1]);
-		CHAMS_BLUE_VALUE = std::stof(chamRgbComponents[2]);
-	} else {
-		std::cout << "Invalid CHAM_RGB value in config." << std::endl;
-		// Default values are already set
-	}
-
-	// GLOW RGB --------------------------------------------- 
-	/*
-	// Glow color when there was no Visible check
-	std::string glowEnemyRgbValue = config["GLOW.ENEMY_RGB"];
-	std::vector<std::string> glowRgbComponents;
-	splitString(glowEnemyRgbValue, ',', glowRgbComponents);
-
-	float glow_redValue = 0.0f;    // Default values
-	float glow_greenValue = 100.0f;
-	float glow_blueValue = 0.0f;
-
-	if (glowRgbComponents.size() == 3) {
-		glow_redValue = std::stof(glowRgbComponents[0]);
-		glow_greenValue = std::stof(glowRgbComponents[1]);
-		glow_blueValue = std::stof(glowRgbComponents[2]);
-	} else {
-		std::cout << "Invalid Visible color value in config." << std::endl;
-		// Default values are already set
-	}
-	*/
-
-	// Glow Color for visible enemies
-	std::string visibleEnemyRgbValue = config["GLOW.ENEMY_VISIBLE"];
-	std::vector<std::string> visibleRgbComponents;
-	splitString(visibleEnemyRgbValue, ',', visibleRgbComponents);
-
-	float VISIBLE_RED_VALUE = 0.0f;    // Default values
-	float VISIBLE_GREEN_VALUE = 60.0f;
-	float VISIBLE_BLUE_VALUE = 0.0f;
-
-	if (visibleRgbComponents.size() == 3) {
-		VISIBLE_RED_VALUE = std::stof(visibleRgbComponents[0]);
-		VISIBLE_GREEN_VALUE = std::stof(visibleRgbComponents[1]);
-		VISIBLE_BLUE_VALUE = std::stof(visibleRgbComponents[2]);
-	} else {
-		std::cout << "Invalid Visible color value in config." << std::endl;
-		// Default values are already set
-	}
-
-	// Glow Color for inVisible enemies
-	std::string invisibleEnemyRgbValue = config["GLOW.ENEMY_inVISIBLE"];
-	std::vector<std::string> invisibleRgbComponents;
-	splitString(invisibleEnemyRgbValue, ',', invisibleRgbComponents);
-
-	float INVISIBLE_RED_VALUE = 60.0f;    // Default values
-	float INVISIBLE_GREEN_VALUE = 0.0f;
-	float INVISIBLE_BLUE_VALUE = 0.0f;
-
-	if (invisibleRgbComponents.size() == 3) {
-		INVISIBLE_RED_VALUE = std::stof(invisibleRgbComponents[0]);
-		INVISIBLE_GREEN_VALUE = std::stof(invisibleRgbComponents[1]);
-		INVISIBLE_BLUE_VALUE = std::stof(invisibleRgbComponents[2]);
-	} else {
-		std::cout << "Invalid inVisible color value in config." << std::endl;
-		// Default values are already set
-	}
-
-	/*
-	// Glow Color for Squard enemies
-	std::string squardRgbValue = config["GLOW.SQUARD_RGB"];
-	std::vector<std::string> squardRgbComponents;
-	splitString(squardRgbValue, ',', squardRgbComponents);
-
-	float squard_redValue = 50.0f;    // Default values
-	float squard_greenValue = 50.0f;
-	float squard_blueValue = 0.0f;
-
-	if (squardRgbComponents.size() == 3) {
-		squard_redValue = std::stof(squardRgbComponents[0]);
-		squard_greenValue = std::stof(squardRgbComponents[1]);
-		squard_blueValue = std::stof(squardRgbComponents[2]);
-	} else {
-		std::cout << "Invalid Squard RGB color value in config." << std::endl;
-		// Default values are already set
-	}
-	*/
+    // Initialize configuration values based on the read configuration
+    InitConfigValues(config);
 	
 	/* ------------------ Terminal Output ------------------ */
-	displayHeader();		//Heading
-	loadBar();				//Loading bar
+	Menu::displayHeader();		//Heading
+	Menu::loadBar();				//Loading bar
 
 	/* ------------------ Initialize temporary/local Value ------------------ */
 	// Recoil Control Values
@@ -537,16 +352,17 @@ int main(void)
 	*/
 	
 	// Terminal Menu display boolean values of config
-	displayConfigValues(config);
+	//displayConfigValues(config);
+	Menu::displayConfigValues();
 
 
 	while (1)
 	{
 		//reloadConfigOnUpdate();
 
-		float fovAds = AIMFOV_ADS;
-		float fovHipfire = AIMFOV_HIPFIRE;
-		float fovdeadzone = AIMFOV_DEADZONE;
+		float fovAds = ConfigValues::AIMFOV_ADS;
+		float fovHipfire = ConfigValues::AIMFOV_HIPFIRE;
+		float fovdeadzone = ConfigValues::AIMFOV_DEADZONE;
 		
 		itemWorkaround++;
 
@@ -605,7 +421,7 @@ int main(void)
         }
 		*/
 
-		if (GLOW_ENABLED == 1 && (levelClass.isPlayable(r5apex) || levelClass.isSpecialMode(r5apex)) )
+		if (ConfigValues::GLOW_ENABLED == 1 && (levelClass.isPlayable(r5apex) || levelClass.isSpecialMode(r5apex)) )
 		{
 			/*
 			// If using Vector to store entity
@@ -737,10 +553,7 @@ int main(void)
 					//Initialize R, G, and B with default values
 					int R, G, B;
 
-					/*
-					if (EntTeam != LocTeam)
-					{
-					*/
+
 					// Glow enable
 					rx_write_i32(r5apex, entity + 0x3F8, 1);
 					rx_write_i32(r5apex, entity + 0x400, 2);
@@ -774,7 +587,7 @@ int main(void)
 						}
 						// Normal Glow Mode with Visible Check, does not work with Health Glow
 						else */
-						if (GLOW_ENEMY == 1 && GLOW_HEALTH == 0)
+						if (ConfigValues::GLOW_ENEMY == 1 && ConfigValues::GLOW_HEALTH == 0)
 						{
 							if (!Visible) 
 							{ 
@@ -784,9 +597,11 @@ int main(void)
 								} 
 								else 
 								{
-									rx_write_float(r5apex, entity + 0x200, INVISIBLE_RED_VALUE);   // Red
-									rx_write_float(r5apex, entity + 0x204, INVISIBLE_GREEN_VALUE); // Green
-									rx_write_float(r5apex, entity + 0x208, INVISIBLE_BLUE_VALUE);  // Blue
+									rx_write_float(r5apex, entity + 0x3E4, ConfigValues::GLOW_DISTANCE);
+
+									rx_write_float(r5apex, entity + 0x200, ConfigValues::INVISIBLE_RED_VALUE);   // Red
+									rx_write_float(r5apex, entity + 0x204, ConfigValues::INVISIBLE_GREEN_VALUE); // Green
+									rx_write_float(r5apex, entity + 0x208, ConfigValues::INVISIBLE_BLUE_VALUE);  // Blue
 
 									continue;
 								}
@@ -799,15 +614,15 @@ int main(void)
 								target_entity = entity;
 								lastvis_aim[i] = entNewVisTime;
 
-								rx_write_float(r5apex, entity + 0x3E4, 99999999.0f);
+								rx_write_float(r5apex, entity + 0x3E4, ConfigValues::GLOW_DISTANCE);
 
-								rx_write_float(r5apex, entity + 0x200, VISIBLE_RED_VALUE);   // Red
-								rx_write_float(r5apex, entity + 0x204, VISIBLE_GREEN_VALUE); // Green
-								rx_write_float(r5apex, entity + 0x208, VISIBLE_BLUE_VALUE);  // Blue
+								rx_write_float(r5apex, entity + 0x200, ConfigValues::VISIBLE_RED_VALUE);   // Red
+								rx_write_float(r5apex, entity + 0x204, ConfigValues::VISIBLE_GREEN_VALUE); // Green
+								rx_write_float(r5apex, entity + 0x208, ConfigValues::VISIBLE_BLUE_VALUE);  // Blue
 							}
 						}
 						// Health Based glow ESP, No Visible Check
-						else if (GLOW_HEALTH == 1)
+						else if (ConfigValues::GLOW_HEALTH == 1)
 						{
 							// Calculate R, G, B based on shield values
 							if (shield > 100)
@@ -840,6 +655,8 @@ int main(void)
 								G = 2;
 								B = 1;
 							}
+
+							rx_write_float(r5apex, entity + 0x3E4, ConfigValues::GLOW_DISTANCE);
 								
 							rx_write_float(r5apex, entity + 0x200, R); // Red
 							rx_write_float(r5apex, entity + 0x204, G); // Green
@@ -848,6 +665,8 @@ int main(void)
 					}
 					else
 					{
+						rx_write_float(r5apex, entity + 0x3E4, ConfigValues::GLOW_DISTANCE);
+
 						// If Entity/ Player is in Knockdown State
 						rx_write_float(r5apex, entity + 0x200, 10.0f);   // Red
 						rx_write_float(r5apex, entity + 0x204, 10.0f); // Green
@@ -858,9 +677,9 @@ int main(void)
 					else if (GLOW_SQUARD == 1)
 					{	
 						// Apply Color to Team/ Squard
-						rx_write_float(r5apex, entity + 0x200, squard_redValue);   // Red
-						rx_write_float(r5apex, entity + 0x204, squard_greenValue); // Green
-						rx_write_float(r5apex, entity + 0x208, squard_blueValue);  // Blue
+						rx_write_float(r5apex, entity + 0x200, ConfigValues::squard_redValue);   // Red
+						rx_write_float(r5apex, entity + 0x204, ConfigValues::squard_greenValue); // Green
+						rx_write_float(r5apex, entity + 0x208, ConfigValues::squard_blueValue);  // Blue
 					}
 				*/
 				}
@@ -922,7 +741,7 @@ int main(void)
 		*/
 
 
-		if (target_entity && (IsButtonDown(r5apex, IInputSystem, AIMKEY) || IsButtonDown(r5apex, IInputSystem, AIMKEY2)) && AIMBOT_ENABLED == 1)
+		if (target_entity && (IsButtonDown(r5apex, IInputSystem, ConfigValues::AIMKEY) || IsButtonDown(r5apex, IInputSystem, ConfigValues::AIMKEY2)) && ConfigValues::AIMBOT_ENABLED == 1)
 		{
 			if (rx_read_i32(r5apex, target_entity + OFFSETS::m_iHealth) == 0)
 				continue;
@@ -943,7 +762,7 @@ int main(void)
 
 			float distance = ((CalcDistance(local_position, enmPos) / 100) * 2);   // need to verify
 			//printf("  	distance %f", ((CalcDistance(local_position, enmPos))/100)*2);
-			bool far = (distance >= AIMBOT_MAXDISTANCE);
+			bool far = (distance >= ConfigValues::AIMBOT_MAXDISTANCE);
 
 			if (far)
 			{
@@ -964,7 +783,7 @@ int main(void)
 			vec3 breath_angles;
 			rx_read_process(r5apex, localplayer + OFFSETS::m_iViewAngles - 0x10, &breath_angles, sizeof(vec3));
 
-			for (int bone : BONE_LIST)
+			for (int bone : ConfigValues::BONE_LIST)
 			{
 				vec3 hitbox = playerClass.GetBonePosition(r5apex, target_entity, bone);
 
@@ -999,7 +818,7 @@ int main(void)
 			if (rx_read_i8(r5apex, localplayer + m_bZooming))
 			{
 				fl_sensitivity = (zoom_fov / 90.0f) * fl_sensitivity;
-				fovAds = AIMFOV_ADS;
+				fovAds = ConfigValues::AIMFOV_ADS;
 			}else{
 				fovAds = fovHipfire;
 			}
@@ -1032,7 +851,7 @@ int main(void)
 
 				float sx = 0.0f, sy = 0.0f;
 
-				float smooth = AIMSMOOTH;
+				float smooth = ConfigValues::AIMSMOOTH;
 
 				DWORD aim_ticks = 0;
 
@@ -1069,22 +888,17 @@ int main(void)
 				if (current_tick - previous_tick > aim_ticks)
 				{
 					previous_tick = current_tick;
-					typedef struct
-					{
-						int x, y;
-					} mouse_data;
-					mouse_data data;
 
-					data.x = (int)sx;
-					data.y = (int)sy;
-					rx_write_process(r5apex, IInputSystem + 0x1DB0, &data, sizeof(data));
+					mouseData.x = (int)sx;
+					mouseData.y = (int)sy;
+					rx_write_process(r5apex, IInputSystem + 0x1DB0, &mouseData, sizeof(mouseData));
 					//printf(" x %i y %i",data.x,data.y);
-					std::this_thread::sleep_for(AIMBOT_SLEEP);
+					std::this_thread::sleep_for(ConfigValues::AIMBOT_SLEEP);
 				}
 			}
 		}
 
-		if (NORECOIL_ENABLED == 1 && (levelClass.isTrainingArea(r5apex) || levelClass.isPlayable(r5apex) || levelClass.isSpecialMode(r5apex)))
+		if ( ConfigValues::NORECOIL_ENABLED == 1 && (levelClass.isTrainingArea(r5apex) || levelClass.isPlayable(r5apex) || levelClass.isSpecialMode(r5apex)))
 		{
 
 			vec3 viewAngles;
@@ -1109,8 +923,8 @@ int main(void)
 			{
 
 				vec3 newAngle;
-				newAngle.x = viewAngles.x + (oldPunch.x - punchAngle.x) * (NORECOIL_STRENGTH / 100.f);
-				newAngle.y = viewAngles.y + (oldPunch.y - punchAngle.y) * (NORECOIL_STRENGTH / 100.f);
+				newAngle.x = viewAngles.x + (oldPunch.x - punchAngle.x) * ( ConfigValues::NORECOIL_STRENGTH / 100.f );
+				newAngle.y = viewAngles.y + (oldPunch.y - punchAngle.y) * ( ConfigValues::NORECOIL_STRENGTH / 100.f );
 				
 				//newAngle.z = viewAngles.z; // Keep the z component the same
 				//newAngle.z = 0; // Set z to zero
@@ -1244,137 +1058,8 @@ int main(void)
 		}
 		*/
 
-		/*
-		if (NORECOIL2_ENABLED == 1) 
-		{
-			vec3 weaponPunch;
-			//rx_read_process(r5apex, target_entity + OFFSETS::m_iAimPunch, &weaponPunch, sizeof(vec3));
-			weaponPunch.x = rx_read_float(r5apex, localplayer + OFFSETS::m_iAimPunch); // Read x
-			weaponPunch.y = rx_read_float(r5apex, localplayer + OFFSETS::m_iAimPunch + sizeof(float)); // Read y
-			weaponPunch.z = rx_read_float(r5apex, localplayer + OFFSETS::m_iAimPunch + 2 * sizeof(float)); // Read z
 
-			// Read mouse sensitivity
-			float sens = rx_read_float(r5apex, sensitivity + 0x68);
-
-			// Isolate the weapon recoil by lookin when recoil pitch is negative
-			// Other forms of recoil tend to have positive recoil pitch
-			if (weaponPunch.x > 0.0f) {
-				weaponPunch = { 0.0f, 0.0f, 0.0f };
-			}
-
-			// Initialize RCS when starting to attack
-			if (!localplayerClass.isInAttack(r5apex)) {
-				my = 0.0f;
-				mx = 0.0f;
-				//oldPunch = weaponPunch;
-				oldPunch.x = weaponPunch.x;
-				oldPunch.y = weaponPunch.y;
-				oldPunch.z = weaponPunch.z;
-			} 
-			else 
-			{
-				// Pitch RCS only when it is increasing
-				// It's unclear why this is so much more effective
-				float pitch = std::max(0.0f, oldPunch.x - weaponPunch.x);
-				float yaw = weaponPunch.y - oldPunch.y;
-				//oldPunch = weaponPunch;
-				oldPunch.x = weaponPunch.x;
-				oldPunch.y = weaponPunch.y;
-				oldPunch.z = weaponPunch.z;
-
-				// Modulate the intensity by the user's sensitivity stuff
-				float scale = sens * (1.0f / 0.022f);
-
-				// Accumulate aiming deltas
-				my += pitch * norecoilPitchStrength * scale;
-				mx += yaw * norecoilYawStrength * scale;
-
-				// Mouse movement is quantized, and keep track of residuals
-				float myRounded = std::round(my);
-				float mxRounded = std::round(mx);
-				my -= myRounded;
-				mx -= mxRounded;
-
-				//mouseMov_data mouseData;
-				mouseData.x = static_cast<int>(mxRounded);
-				mouseData.y = static_cast<int>(myRounded);
-
-				if (mouseData.x != 0 || mouseData.y != 0) {
-					// Use rx_write_process to send mouseData to a memory address (IInputSystem + 0x1DB0)
-					rx_write_process(r5apex, IInputSystem + 0x1DB0, &mouseData, sizeof(mouseData));
-				}
-			}
-		}
-		*/
-
-		if (NORECOIL2_ENABLED == 1 && (levelClass.isTrainingArea(r5apex) || levelClass.isPlayable(r5apex) || levelClass.isSpecialMode(r5apex))) 
-		{
-			vec3 viewAngles;
-			rx_read_process(r5apex, target_entity + OFFSETS::m_iViewAngles, &viewAngles, sizeof(vec3));
-
-			vec3 weaponPunch;
-			rx_read_process(r5apex, target_entity + OFFSETS::m_iAimPunch, &weaponPunch, sizeof(vec3));
-			
-
-			// Read mouse sensitivity
-			float sens = rx_read_float(r5apex, sensitivity + 0x68);
-
-			// Initialize RCS when starting to attack
-			if (!localplayerClass.isInAttack(r5apex)) {
-				// Player is not actively firing, reset oldPunch
-				oldPunch = weaponPunch;
-			} 
-			else
-			{
-				// Calculate the desired view angles after recoil compensation
-				vec3 desiredViewAngles;
-				desiredViewAngles.x = viewAngles.x - (oldPunch.x - weaponPunch.x) * (sens / 0.022f);
-				desiredViewAngles.y = viewAngles.y - (oldPunch.y - weaponPunch.y) * (sens / -0.022f);
-
-				// Calculate the difference between current and desired view angles
-				vec3 angleDifference;
-				angleDifference.x = desiredViewAngles.x - viewAngles.x;
-				angleDifference.y = desiredViewAngles.y - viewAngles.y;
-
-				// Translate angle difference into mouse movement
-				float mouseXDelta = (angleDifference.y); // Adjust as needed
-				float mouseYDelta = (angleDifference.x); // Adjust as needed
-
-				float smooth = sens; // Adjust for desired smoothing factor
-
-				if (smooth >= 1.0f) {
-					// Apply smoothing logic
-					float smoothingFactor = 1.0f / smooth;
-
-					if (mouseXDelta < 0) {
-						mouseXDelta = (mouseXDelta + mouseXDelta * smoothingFactor);
-					} else {
-						mouseXDelta = (mouseXDelta - mouseXDelta * smoothingFactor);
-					}
-
-					if (mouseYDelta < 0) {
-						mouseYDelta = (mouseYDelta + mouseYDelta * smoothingFactor);
-					} else {
-						mouseYDelta = (mouseYDelta - mouseYDelta * smoothingFactor);
-					}
-				}
-
-				// Apply mouse movement to compensate for recoil
-				MouseMovementData mouseData;
-				mouseData.x = (int)mouseXDelta;
-				mouseData.y = (int)mouseYDelta;
-
-				// Write the mouse movement data to the game
-				rx_write_process(r5apex, IInputSystem + 0x1DB0, &mouseData, sizeof(MouseMovementData));
-
-				// Store the current weaponPunch as oldPunch for the next calculation
-				oldPunch = weaponPunch;
-			}
-		}
-
-
-
-		if (WEAPON_CHAMS == 1 && (levelClass.isTrainingArea(r5apex) || levelClass.isPlayable(r5apex) || levelClass.isSpecialMode(r5apex)) )
+		if ( ConfigValues::WEAPON_CHAMS == 1 && (levelClass.isTrainingArea(r5apex) || levelClass.isPlayable(r5apex) || levelClass.isSpecialMode(r5apex)) )
 		{
 			//uintptr_t MyLocalplayer = rx_read_i64(r5apex, base_module + OFFSETS::m_localplayer);
 
@@ -1389,16 +1074,16 @@ int main(void)
 			// different types: { 135,135,80,0 }
 			//					{ 101,102,96,90 }
 			//GlowMode glowModeData = { 101, 101, 80, 0 };
-			GlowMode glowModeData = { 101, 101, CHAM_BORDER, 0 };
+			GlowMode glowModeData = { 101, 101, ConfigValues::CHAM_BORDER, 0 };
 			rx_write_array(r5apex, ViewModelPtr + 0x2F4, (char*)&glowModeData, sizeof(GlowMode));
 			//rx_write_i32(r5apex, ViewModelPtr + 0x2F4, 1512990053);
 
-			rx_write_float(r5apex, ViewModelPtr + 0x200, CHAMS_RED_VALUE);
-			rx_write_float(r5apex, ViewModelPtr + 0x204, CHAMS_GREEN_VALUE);
-			rx_write_float(r5apex, ViewModelPtr + 0x208, CHAMS_BLUE_VALUE);
+			rx_write_float(r5apex, ViewModelPtr + 0x200, ConfigValues::CHAMS_RED_VALUE);
+			rx_write_float(r5apex, ViewModelPtr + 0x204, ConfigValues::CHAMS_GREEN_VALUE);
+			rx_write_float(r5apex, ViewModelPtr + 0x208, ConfigValues::CHAMS_BLUE_VALUE);
 		}
 
-		if(ARMS_CHAMS == 1 && (levelClass.isTrainingArea(r5apex) || levelClass.isPlayable(r5apex) || levelClass.isSpecialMode(r5apex)))
+		if( ConfigValues::ARMS_CHAMS == 1 && (levelClass.isTrainingArea(r5apex) || levelClass.isPlayable(r5apex) || levelClass.isSpecialMode(r5apex)))
 		{
 			uintptr_t ViewModelArmHandle = rx_read_i64(r5apex, localplayer + OFFSETS::arm_ViewModels) & 0xFFFF;		//0x2d6C
 			uintptr_t ViewModelArm = rx_read_i64(r5apex, base_module + OFFSETS::m_cl_entitylist + ViewModelArmHandle * 0x20);
@@ -1407,39 +1092,12 @@ int main(void)
 			rx_write_i32(r5apex, ViewModelArm + 0x400, 2);
 
 			//GlowMode glowModeData = { 101, 101, 80, 0 };
-			GlowMode glowModeData = { 101, 101, CHAM_BORDER, 0 };
+			GlowMode glowModeData = { 101, 101, ConfigValues::CHAM_BORDER, 0 };
 			rx_write_array(r5apex, ViewModelArm + 0x2F4, (char*)&glowModeData, sizeof(GlowMode));
 
-			rx_write_float(r5apex, ViewModelArm + 0x200, CHAMS_RED_VALUE);
-			rx_write_float(r5apex, ViewModelArm + 0x204, CHAMS_GREEN_VALUE);
-			rx_write_float(r5apex, ViewModelArm + 0x208, CHAMS_BLUE_VALUE);
-		}
-
-		if (MAP_RADAR == 1 && levelClass.isPlayable(r5apex) )
-		{	
-			/*
-			if((IsButtonDown(r5apex, IInputSystem, map_radar_toggle_key)))
-			{
-				mapRadarActive = !mapRadarActive;
-				std::this_thread::sleep_for(std::chrono::milliseconds(250));
-			}
-
-			if(mapRadarActive)
-			{
-				*/
-				//uintptr_t pLocal = rx_read_i64(r5apex, base_module + OFFSETS::m_localplayer);
-				//int defTeam = rx_read_i32(r5apex, localplayer + m_iTeamNum);
-
-				// Set the team to 1
-				for (uintptr_t i = 0; i <= 8000; i++) //80000 , 8000
-				{
-					rx_write_i32(r5apex, localplayer + m_iTeamNum, 1);
-				}
-				// Restore the original team
-				for (uintptr_t i = 0; i <= 8000; i++) //80000
-				{
-					rx_write_i32(r5apex, localplayer + m_iTeamNum, local_team);
-				}
+			rx_write_float(r5apex, ViewModelArm + 0x200, ConfigValues::CHAMS_RED_VALUE);
+			rx_write_float(r5apex, ViewModelArm + 0x204, ConfigValues::CHAMS_GREEN_VALUE);
+			rx_write_float(r5apex, ViewModelArm + 0x208, ConfigValues::CHAMS_BLUE_VALUE);
 		}
 
 		/*
@@ -1475,7 +1133,7 @@ int main(void)
 		}
 		*/
 
-		if ( TRIGGER_ENABLED==1 && (levelClass.isTrainingArea(r5apex) || levelClass.isPlayable(r5apex) || levelClass.isSpecialMode(r5apex)))
+		if ( ConfigValues::TRIGGER_ENABLED==1 && (levelClass.isTrainingArea(r5apex) || levelClass.isPlayable(r5apex) || levelClass.isSpecialMode(r5apex)))
 		{
 			DWORD weapon_id = rx_read_i32(r5apex, localplayer + m_iWeapon) & 0xFFFF;
 			QWORD weapon = playerClass.GetClientEntity(r5apex, IClientEntityList, weapon_id - 1);
@@ -1484,9 +1142,16 @@ int main(void)
 			{
 				QWORD pEntity = playerClass.GetClientEntity(r5apex, IClientEntityList, p);
 
+				//Team Number check
+				int EntTeam = rx_read_i32(r5apex, pEntity + m_iTeamNum);
+				int LocTeam = rx_read_i32(r5apex, localplayer + m_iTeamNum);
+				if (EntTeam == LocTeam)
+				{
+					continue;
+				}
+
 				bool Crosshair = playerClass.isCrosshair(r5apex, pEntity, temp_crosshairData[p]);
 
-				//IsButtonDown(r5apex, IInputSystem, TRIGGER_KEY)
 				auto tmp_triggerbot = false;
 				if (!Crosshair)
 				{ 
@@ -1497,7 +1162,7 @@ int main(void)
 						tmp_triggerbot = false;
 					}
 				}
-				else if (Crosshair && (IsButtonDown(r5apex, IInputSystem, TRIGGER_KEY)))
+				else if (Crosshair && (IsButtonDown(r5apex, IInputSystem, ConfigValues::TRIGGER_KEY)))
 				{
 					loopsSinceLastCrosshair[p] = 0; //only if truely Crosshair
 
@@ -1522,8 +1187,20 @@ int main(void)
 			}
 		}
 
+		if ( ConfigValues::SKIN_CHANGER == 1 && (levelClass.isTrainingArea(r5apex) || levelClass.isPlayable(r5apex) || levelClass.isSpecialMode(r5apex)) )
+		{
+			if ( localplayerClass.isAlive(r5apex) && !localplayerClass.isKnocked(r5apex) )
+			{
+				DWORD weapon_id = rx_read_i32(r5apex, localplayer + m_iWeapon) & 0xFFFF;
+				QWORD weapon = playerClass.GetClientEntity(r5apex, IClientEntityList, weapon_id - 1);
 
-		if (AUTO_GRAPPLE ==1 && (levelClass.isTrainingArea(r5apex) || levelClass.isPlayable(r5apex) || levelClass.isSpecialMode(r5apex)) /* && (IsButtonDown(r5apex, IInputSystem, auto_grapple_key)) */)
+				rx_write_i32(r5apex, weapon + OFFSETS::nSKIN, ConfigValues::WeaponSkinID);
+				rx_write_i32(r5apex, localplayer + OFFSETS::nSKIN, ConfigValues::PlayerSkinID);
+			}
+		}
+
+
+		if ( ConfigValues::AUTO_GRAPPLE ==1 && (levelClass.isTrainingArea(r5apex) || levelClass.isPlayable(r5apex) || levelClass.isSpecialMode(r5apex)) /* && (IsButtonDown(r5apex, IInputSystem, auto_grapple_key)) */)
 		{
 			rx_write_i32(r5apex, base_module + OFFSETS::in_jump + 0x8, 4);
 			auto no_grapple = rx_read_int(r5apex, localplayer + OFFSETS::m_grapple + OFFSETS::m_grappleAttached);
@@ -1533,7 +1210,7 @@ int main(void)
 			}
 		}
 
-		if (SPEC_COUNT == 1 && levelClass.isPlayable(r5apex))
+		if ( ConfigValues::SPECTATOR_COUNT == 1 && levelClass.isPlayable(r5apex))
         {
 			int spectatorcount = 0;
 
@@ -1589,7 +1266,7 @@ int main(void)
 		}
 
 		//item glow
-		if (itemWorkaround == 5000 && ITEM_ESP_ENABLED == 1 /*&& (isTrainingArea(r5apex) || isPlayable(r5apex) || isSpecialMode(r5apex))  &&  (IsButtonDown(r5apex, IInputSystem, ITEM_ESP_TOGGLE)) */)
+		if (itemWorkaround == 5000 && ConfigValues::ITEM_ESP_ENABLED == 1 && (levelClass.isTrainingArea(r5apex) || levelClass.isPlayable(r5apex) || levelClass.isSpecialMode(r5apex)) )
 		//printf("GLOW -- %i",itemWorkaround);
 		{
 			for (int k = 0; k < 10000; k++)
@@ -1598,17 +1275,18 @@ int main(void)
 				itemID = rx_read_int(r5apex, entity + OFFSETS::m_itemId);
 
 				// Apply ITEM_ESP settings only if ITEM_ESP is enabled and itemID is in ITEM_ESP_IDS
-				if (ITEM_ESP == 1 && IsInItemEspIds(itemID, itemEspIds)) {
+				if (ConfigValues::ITEM_ESP == 1 && IsInItemEspIds(itemID, ConfigValues::ITEM_ESP_IDS)) {
 					rx_write_i32(r5apex, entity + 0x3F8, 1);
 					rx_write_i32(r5apex, entity + 0x400, 2);
 					rx_write_i32(r5apex, entity + 0x2F4, 1512990053);
+
 					rx_write_float(r5apex, entity + 0x200, 61.f);
 					rx_write_float(r5apex, entity + 0x204, 2.f);
 					rx_write_float(r5apex, entity + 0x208, 2.f);
 				}
 
 				// Apply LOBA_ESP settings only if LOBA_ESP is enabled and itemID is in LOBA_ESP_IDS
-				if (LOBA_ESP == 1 && IsInLobaEspIds(itemID, lobaEspIds)) {
+				if (ConfigValues::LOBA_ESP == 1 && IsInLobaEspIds(itemID, ConfigValues::LOBA_ESP_IDS)) {
 					//rx_write_i32(r5apex, entity + 0x292, 16256);
 					//rx_write_i32(r5apex, entity + 0x30c, 1193322764);
 					rx_write_i32(r5apex, entity + 0x2F0, 1363184265);
@@ -1637,8 +1315,8 @@ int main(void)
 				*/
 
 		
-
-		if (TAPSTRAFE == 1 && (levelClass.isTrainingArea(r5apex) || levelClass.isPlayable(r5apex) || levelClass.isSpecialMode(r5apex)) )
+		/*
+		if ( ConfigValues::TAPSTRAFE == 1 && (levelClass.isTrainingArea(r5apex) || levelClass.isPlayable(r5apex) || levelClass.isSpecialMode(r5apex)) )
 		{
 			if (IsButtonDown(r5apex, IInputSystem, bunny_key))
 			{
@@ -1653,7 +1331,7 @@ int main(void)
 				rx_send_input_key(keyboardInput, RX_KEY_W, false);
 				rx_send_input_key(keyboardInput, RX_KEY_SPACE, false);
 
-				/*
+				
 				rx_write_i32(r5apex, base_module + OFFSETS::in_forward + 0x8, 5);
 				std::this_thread::sleep_for(std::chrono::milliseconds(5));
 				rx_write_i32(r5apex, base_module + OFFSETS::in_jump + 0x8, 5);
@@ -1663,13 +1341,41 @@ int main(void)
 				std::this_thread::sleep_for(std::chrono::milliseconds(5));
 				//rx_write_i32(r5apex, base_module + OFFSETS::in_forward + 0x8, 4);
 				//std::this_thread::sleep_for(std::chrono::milliseconds(5));
-				*/
+				
 			}
 			
 		}
+		*/
+
+		if ( ConfigValues::MAP_RADAR == 1 && levelClass.isPlayable(r5apex) )
+			{	
+				/*
+				if((IsButtonDown(r5apex, IInputSystem, map_radar_toggle_key)))
+				{
+					mapRadarActive = !mapRadarActive;
+					std::this_thread::sleep_for(std::chrono::milliseconds(250));
+				}
+
+				if(mapRadarActive)
+				{
+					*/
+					//uintptr_t pLocal = rx_read_i64(r5apex, base_module + OFFSETS::m_localplayer);
+					//int defTeam = rx_read_i32(r5apex, localplayer + m_iTeamNum);
+
+					// Set the team to 1
+					for (uintptr_t i = 0; i <= 8000; i++) //80000 , 8000
+					{
+						rx_write_i32(r5apex, localplayer + m_iTeamNum, 1);
+					}
+					// Restore the original team
+					for (uintptr_t i = 0; i <= 8000; i++) //80000
+					{
+						rx_write_i32(r5apex, localplayer + m_iTeamNum, local_team);
+					}
+			}
 
 		/*
-		if (FAKEDUCK == 1 && (IsButtonDown(r5apex, IInputSystem, FAKEDUCK_KEY)))
+		if ( ConfigValues::FAKEDUCK == 1 && (IsButtonDown(r5apex, IInputSystem, FAKEDUCK_KEY)))
 		{
 				rx_write_float(r5apex, base_module + OFFSETS::host_timescale + 0x68, 0.0f);
 			}

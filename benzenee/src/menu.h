@@ -5,7 +5,7 @@
 #include <thread>
 #include <map>
 #include <string>
-
+#include "configvalues.h"
 
 /* ------------------ ANSI escape ------------------ */
 // Define ANSI escape codes for text styles and colors
@@ -36,6 +36,12 @@
 #define BG_CYAN       "\033[46m"
 #define BG_WHITE      "\033[47m"
 
+namespace Menu {
+
 void displayHeader();
 void loadBar();
-void displayConfigValues(const std::map<std::string, std::string>& config);
+
+//void displayConfigValues(const std::map<std::string, std::string>& config);
+void displayConfigValues();
+
+}

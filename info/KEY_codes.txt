@@ -5,6 +5,7 @@
 111 Side mouse button (mouse5)
 
 79 SHIFT key
+80 Left ALt key
 81 ALT key
 83 CTRL key
 
