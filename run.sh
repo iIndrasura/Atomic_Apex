@@ -1,10 +1,10 @@
 #!/bin/bash
 
-if [ -f benzenee ]; then
-# if [ -f "build/benzenee/benzenee" ]; then
+if [ -f Atomic ]; then
+# if [ -f "build/Atomic/Atomic" ]; then
     filename=$(openssl rand -hex $((RANDOM % 11 + 10)))
-    cp benzenee "$filename"
-    # cp "build/benzenee/benzenee" "$filename"
+    cp Atomic "$filename"
+    # cp "build/Atomic/Atomic" "$filename"
     sudo chmod 700 "$filename"
     sudo ./"$filename"
     rm "$filename"

@@ -1,0 +1,25 @@
+cmake_minimum_required(VERSION 2.6)
+project(benzenee)
+set(OUT benzenee)
+
+add_executable(${OUT}
+    src/main.cpp)
+
+set_target_properties(${OUT} PROPERTIES LINKER_LANGUAGE CXX)
+
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -DNDEBUG -Wno-format-truncation -Wno-strict-aliasing -O2 -s")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wno-format-truncation -Wno-strict-aliasing")
+
+if (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+
+# Find X11 library
+find_package(X11 REQUIRED)
+
+# Use pkg-config to get XTest flags
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(XTEST REQUIRED xtst)
+
+# Link against the necessary libraries
+target_link_libraries(${OUT} rx ${X11_LIBRARIES} ${XTEST_LIBRARIES} "-Wall -DNDEBUG -pthread -s -O2")

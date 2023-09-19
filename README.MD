@@ -1,6 +1,6 @@
-# benzenee  
+# Atomic  
 git clone  
-cd benzenee  
+cd Atomic  
 ./run  
 
 #new features added by me

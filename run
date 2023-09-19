@@ -3,4 +3,4 @@ cd build
 cmake ..
 make -j8
 cd ..
-sudo ./build/benzenee/benzenee
+sudo ./build/Atomic/Atomic
