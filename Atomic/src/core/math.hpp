@@ -17,7 +17,9 @@ const float GAME_UNITS_TO_METERS = 0.01905f;
 
 typedef struct
 {
-	float x, y, z;
+	float x; // 0x8-0xC
+    float y; // 0xC-0x10
+    float z; // 0x10-0x14
 } vec3;
 
 typedef struct
@@ -31,11 +33,6 @@ typedef struct {
     int8_t BorderSize;
     int8_t TransparentLevel;
 } GlowMode;
-
-typedef struct
-{
-	float r, b, g;
-}Color;
 
 typedef struct
 {

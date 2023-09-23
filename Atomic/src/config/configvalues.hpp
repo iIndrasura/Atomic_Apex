@@ -37,6 +37,7 @@ public:
 
     // GLOW Configuration
     static int GLOW_ENABLED;
+    static int GLOW_ENABLED2;
     static int GLOW_ENEMY;
     //static int GLOW_SQUARD;
     static int GLOW_HEALTH;
@@ -52,7 +53,7 @@ public:
     static int CHAMS_ENABLED;
     static int WEAPON_CHAMS;
     static int ARMS_CHAMS;
-    static int8_t CHAM_BORDER;
+    static float CHAM_BORDER;
 
     // SkinChanger Configuration
     static int SKIN_CHANGER;
@@ -75,6 +76,11 @@ public:
 
     // Loba ESP IDs Configuration
     static std::vector<int> LOBA_ESP_IDS;
+
+    // Item ESP RGB Color Configuration
+    static float ITEM_RED_VALUE;
+    static float ITEM_GREEN_VALUE;
+    static float ITEM_BLUE_VALUE;
 
     // Chams RGB Color Configuration
     static float CHAMS_RED_VALUE;
@@ -100,6 +106,11 @@ public:
     //static float squard_redValue;
     //static float squard_greenValue;
     //static float squard_blueValue;
+
+    // Knocked Enemy RGB Color Configuration
+    static float KNOCKED_RED_VALUE;
+    static float KNOCKED_GREEN_VALUE;
+    static float KNOCKED_BLUE_VALUE;
 };
 
 void InitConfigValues(std::map<std::string, std::string>& config);

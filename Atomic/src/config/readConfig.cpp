@@ -81,13 +81,15 @@ void readConfig(std::map<std::string, std::string>& config)
 			//GLOW
 			newConfigFile << "[GLOW]" << std::endl;
             newConfigFile << "GLOW_ENABLED=1" << std::endl;
+			newConfigFile << "GLOW_ENABLED2=1" << std::endl;
 			newConfigFile << "GLOW_ENEMY=1" << std::endl;
 			//newConfigFile << "ENEMY_RGB=0,0,100" << std::endl;
-            newConfigFile << "ENEMY_VISIBLE=0,60,0" << std::endl;
-			newConfigFile << "ENEMY_inVISIBLE=60,0,0" << std::endl;
+            newConfigFile << "ENEMY_VISIBLE=0,255,0" << std::endl;
+			newConfigFile << "ENEMY_inVISIBLE=255,0,0" << std::endl;
 			newConfigFile << "GLOW_HEALTH=0" << std::endl;
 			//newConfigFile << "GLOW_SQUARD=1" << std::endl;
             //newConfigFile << "SQUARD_RGB=50,50,0" << std::endl;
+			newConfigFile << "KNOCKED_RGB=255,255,255" << std::endl;
 			newConfigFile << "GLOW_DISTANCE=200.0" << std::endl;
 			
 			//Chams
@@ -103,6 +105,7 @@ void readConfig(std::map<std::string, std::string>& config)
 			newConfigFile << "ITEM_ESP_ENABLED=1" << std::endl;
 			//newConfigFile << "ITEM_ESP_TOGGLE=26" << std::endl;
 			newConfigFile << "ITEM_ESP=1" << std::endl;
+			newConfigFile << "ITEM_ESP_RGB=255,215,0" << std::endl;
 			newConfigFile << "LOBA_ESP=1" << std::endl;
 			newConfigFile << "ITEM_ESP_IDS=80,90,28,105,134,150" << std::endl;
             newConfigFile << "LOBA_ESP_IDS=182,183,185,186,199,208,209" << std::endl;

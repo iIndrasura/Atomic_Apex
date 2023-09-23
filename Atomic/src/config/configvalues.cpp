@@ -23,6 +23,7 @@ int ConfigValues::TB_IGNORE_KNOCKED = 1;
 
 // GLOW
 int ConfigValues::GLOW_ENABLED = 1;
+int ConfigValues::GLOW_ENABLED2 = 0;
 int ConfigValues::GLOW_ENEMY = 1;
 int ConfigValues::GLOW_HEALTH = 0;
 float ConfigValues::GLOW_DISTANCE = 200.0f/0.01905f;
@@ -36,7 +37,7 @@ int ConfigValues::LOBA_ESP = 1;
 int ConfigValues::CHAMS_ENABLED = 1;
 int ConfigValues::WEAPON_CHAMS = 1;
 int ConfigValues::ARMS_CHAMS = 0;
-int8_t ConfigValues::CHAM_BORDER = 80;
+float ConfigValues::CHAM_BORDER = 1.5f;
 
 // SkinChanger
 int ConfigValues::SKIN_CHANGER = 1;
@@ -57,21 +58,31 @@ std::vector<int> ConfigValues::ITEM_ESP_IDS{80, 90, 28, 105, 134, 150};
 // Loba ESP IDs
 std::vector<int> ConfigValues::LOBA_ESP_IDS{182, 183, 185, 186, 199, 208, 209};
 
+// Item RGB values
+float ConfigValues::ITEM_RED_VALUE = 255.0f;
+float ConfigValues::ITEM_GREEN_VALUE = 215.0f;
+float ConfigValues::ITEM_BLUE_VALUE = 0.0f;
+
 // Chams RGB values
 float ConfigValues::CHAMS_RED_VALUE = 61.0f;
 float ConfigValues::CHAMS_GREEN_VALUE = 2.0f;
 float ConfigValues::CHAMS_BLUE_VALUE = 2.0f;
 
 // Glow colors
-float ConfigValues::VISIBLE_RED_VALUE = 0.0f;
-float ConfigValues::VISIBLE_GREEN_VALUE = 60.0f;
-float ConfigValues::VISIBLE_BLUE_VALUE = 0.0f;
+float ConfigValues::VISIBLE_RED_VALUE = 0.0f / 255.0f;
+float ConfigValues::VISIBLE_GREEN_VALUE = 255.0f / 255.0f;
+float ConfigValues::VISIBLE_BLUE_VALUE = 0.0f / 255.0f;
 
-float ConfigValues::INVISIBLE_RED_VALUE = 60.0f;
-float ConfigValues::INVISIBLE_GREEN_VALUE = 0.0f;
-float ConfigValues::INVISIBLE_BLUE_VALUE = 0.0f;
+float ConfigValues::INVISIBLE_RED_VALUE = 255.0f / 255.0f;
+float ConfigValues::INVISIBLE_GREEN_VALUE = 0.0f / 255.0f;
+float ConfigValues::INVISIBLE_BLUE_VALUE = 0.0f / 255.0f;
 
-void InitConfigValues(std::map<std::string, std::string>& config) {
+float ConfigValues::KNOCKED_RED_VALUE = 255.0f / 255.0f;
+float ConfigValues::KNOCKED_GREEN_VALUE = 255.0f / 255.0f;
+float ConfigValues::KNOCKED_BLUE_VALUE = 255.0f / 255.0f;
+
+void InitConfigValues(std::map<std::string, std::string>& config) 
+{
     // AIMBOT Configuration
     ConfigValues::AIMSMOOTH = std::stof(config["AIMBOT.AIMSMOOTH"]);
     ConfigValues::AIMBOT_ENABLED = std::stoi(config["AIMBOT.AIMBOT_ENABLED"]);
@@ -100,7 +111,8 @@ void InitConfigValues(std::map<std::string, std::string>& config) {
     ConfigValues::GLOW_ENABLED = std::stoi(config["GLOW.GLOW_ENABLED"]);
     ConfigValues::GLOW_ENEMY = std::stoi(config["GLOW.GLOW_ENEMY"]);
     ConfigValues::GLOW_HEALTH = std::stoi(config["GLOW.GLOW_HEALTH"]);
-    ConfigValues::GLOW_DISTANCE = (std::stof(config["GLOW.GLOW_DISTANCE"])) / 0.01905f;      //convert from meter to in game unit * 0.01905
+    ConfigValues::GLOW_DISTANCE = (std::stof(config["GLOW.GLOW_DISTANCE"])) / 0.01905f;    //convert from meter to in game unit * 0.01905
+    ConfigValues::GLOW_ENABLED2 = std::stoi(config["GLOW.GLOW_ENABLED2"]);
 
     // ESP and ITEM ESP
     ConfigValues::ITEM_ESP_ENABLED = std::stoi(config["ESP.ITEM_ESP_ENABLED"]);
@@ -182,9 +194,9 @@ void InitConfigValues(std::map<std::string, std::string>& config) {
     // ConfigValues::VISIBLE_BLUE_VALUE;
 
     if (visibleRgbComponents.size() == 3) {
-        ConfigValues::VISIBLE_RED_VALUE = std::stof(visibleRgbComponents[0]);
-        ConfigValues::VISIBLE_GREEN_VALUE = std::stof(visibleRgbComponents[1]);
-        ConfigValues::VISIBLE_BLUE_VALUE = std::stof(visibleRgbComponents[2]);
+        ConfigValues::VISIBLE_RED_VALUE = ((std::stof(visibleRgbComponents[0])) / 255.0f);
+        ConfigValues::VISIBLE_GREEN_VALUE = ((std::stof(visibleRgbComponents[1])) / 255.0f);
+        ConfigValues::VISIBLE_BLUE_VALUE = ((std::stof(visibleRgbComponents[2])) / 255.0f);
     } else {
         std::cout << "Invalid Visible color value in config." << std::endl;
         // Default values are already set
@@ -200,11 +212,48 @@ void InitConfigValues(std::map<std::string, std::string>& config) {
     // ConfigValues::INVISIBLE_BLUE_VALUE;
 
     if (invisibleRgbComponents.size() == 3) {
-        ConfigValues::INVISIBLE_RED_VALUE = std::stof(invisibleRgbComponents[0]);
-        ConfigValues::INVISIBLE_GREEN_VALUE = std::stof(invisibleRgbComponents[1]);
-        ConfigValues::INVISIBLE_BLUE_VALUE = std::stof(invisibleRgbComponents[2]);
+        ConfigValues::INVISIBLE_RED_VALUE = ((std::stof(invisibleRgbComponents[0])) / 255.0f);
+        ConfigValues::INVISIBLE_GREEN_VALUE = ((std::stof(invisibleRgbComponents[1])) / 255.0f);
+        ConfigValues::INVISIBLE_BLUE_VALUE = ((std::stof(invisibleRgbComponents[2])) / 255.0f);
     } else {
         std::cout << "Invalid inVisible color value in config." << std::endl;
         // Default values are already set
     }
+
+    // Glow Color for Knocked enemies
+    std::string knockedEnemyRgbValue = config["GLOW.KNOCKED_RGB"];
+    std::vector<std::string> knockedRgbComponents;
+    splitString(knockedEnemyRgbValue, ',', knockedRgbComponents);
+
+    // ConfigValues::KNOCKED_RED_VALUE = 60.0f;    // Default values
+    // ConfigValues::KNOCKED_GREEN_VALUE;
+    // ConfigValues::KNOCKED_BLUE_VALUE;
+
+    if (knockedRgbComponents.size() == 3) {
+        ConfigValues::KNOCKED_RED_VALUE = ((std::stof(knockedRgbComponents[0])) / 255.0f);
+        ConfigValues::KNOCKED_GREEN_VALUE = ((std::stof(knockedRgbComponents[1])) / 255.0f);
+        ConfigValues::KNOCKED_BLUE_VALUE = ((std::stof(knockedRgbComponents[2])) / 255.0f);
+    } else {
+        std::cout << "Invalid Knocked enemy color value in config." << std::endl;
+        // Default values are already set
+    }
+    
+    // ITEM ESP Color for Knocked enemies
+    std::string itemEnemyRgbValue = config["ESP.ITEM_ESP_RGB"];
+    std::vector<std::string> itemRgbComponents;
+    splitString(itemEnemyRgbValue, ',', itemRgbComponents);
+
+    // ConfigValues::ITEM_RED_VALUE = 60.0f;    // Default values
+    // ConfigValues::ITEM_GREEN_VALUE;
+    // ConfigValues::ITEM_BLUE_VALUE;
+
+    if (itemRgbComponents.size() == 3) {
+        ConfigValues::ITEM_RED_VALUE = ((std::stof(itemRgbComponents[0])) / 255.0f);
+        ConfigValues::ITEM_GREEN_VALUE = ((std::stof(itemRgbComponents[1])) / 255.0f);
+        ConfigValues::ITEM_BLUE_VALUE = ((std::stof(itemRgbComponents[2])) / 255.0f);
+    } else {
+        std::cout << "Invalid Item ESP color value in config." << std::endl;
+        // Default values are already set
+    }
+   
 }

@@ -27,9 +27,9 @@ void Chams::ApplyChamsLogic(rx_handle process) {
     bool chamsEnabled = (ConfigValues::CHAMS_ENABLED == 1) && shouldChamsEnable(process);
 
     if (chamsEnabled) {
-        int chamsRedValue = ConfigValues::CHAMS_RED_VALUE;
-        int chamsGreenValue = ConfigValues::CHAMS_GREEN_VALUE;
-        int chamsBlueValue = ConfigValues::CHAMS_BLUE_VALUE;
+        float chamsRedValue = ConfigValues::CHAMS_RED_VALUE;
+        float chamsGreenValue = ConfigValues::CHAMS_GREEN_VALUE;
+        float chamsBlueValue = ConfigValues::CHAMS_BLUE_VALUE;
 
         if (ConfigValues::WEAPON_CHAMS == 1) {
             uintptr_t ViewModelHandle = localplayerClass.getViewModelHandle(process);
@@ -45,15 +45,29 @@ void Chams::ApplyChamsLogic(rx_handle process) {
     }
 }
 
-void Chams::ApplyChamsToViewModel(rx_handle process, uintptr_t viewModelPtr, int red, int green, int blue) {
-    rx_write_i32(process, viewModelPtr + 0x3F8, 1);
-    rx_write_i32(process, viewModelPtr + 0x400, 2);
+void Chams::ApplyChamsToViewModel(rx_handle process, uintptr_t viewModelPtr, float red, float green, float blue) {
+    // rx_write_i32(process, viewModelPtr + 0x3F8, 1);
+    // rx_write_i32(process, viewModelPtr + 0x400, 2);
 
-    //GlowMode glowModeData = { 101, 101, 80, 0 };
-    GlowMode glowModeData = { 101, 101, ConfigValues::CHAM_BORDER, 0 };
-    rx_write_array(process, viewModelPtr + 0x2F4, (char*)&glowModeData, sizeof(GlowMode));
+    // //GlowMode glowModeData = { 101, 101, 80, 0 };
+    // GlowMode glowModeData = { 101, 101, ConfigValues::CHAM_BORDER, 0 };
+    // rx_write_array(process, viewModelPtr + 0x2F4, (char*)&glowModeData, sizeof(GlowMode));
 
-    rx_write_float(process, viewModelPtr + 0x200, red);
-    rx_write_float(process, viewModelPtr + 0x204, green);
-    rx_write_float(process, viewModelPtr + 0x208, blue);
+    // rx_write_float(process, viewModelPtr + 0x200, red);
+    // rx_write_float(process, viewModelPtr + 0x204, green);
+    // rx_write_float(process, viewModelPtr + 0x208, blue);
+
+    uint32_t ContextID = 0/* highlightClass.GetHighlightCurrentContext(process, viewModelPtr) */;
+    highlightClass.SetHighlightCurrentContext(process, viewModelPtr, ContextID);      // Glow set context ID aka Enable
+    highlightClass.SetHighlightVisibilityType(process, viewModelPtr, 2); 
+
+    uint32_t FunctionParameterIndexId = 73;
+    highlightClass.SetHighlightActiveState(process, viewModelPtr, ContextID, FunctionParameterIndexId);
+    highlightClass.SetHighlightFunctions(process, viewModelPtr, FunctionParameterIndexId, 0, 125, ConfigValues::CHAM_BORDER, true, 0, false);
+
+    // set color    { 1.0f, 0.0f, 0.0f }
+    Color color = { red, green, blue };
+    highlightClass.SetHighlightParameter(process, viewModelPtr, FunctionParameterIndexId, &color.r);
 }
+
+

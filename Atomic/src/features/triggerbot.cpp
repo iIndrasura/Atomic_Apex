@@ -99,3 +99,11 @@ void TriggerBot::ApplyTriggerBot(rx_handle process, QWORD ClientEntityList, QWOR
         }
     }
 }
+
+
+// Mouse Event For in Attack offset
+// Mem::Write<uint32_t>(Mem::Base() + OFFSET_IN_ATTACK + 0x8, 4);
+// Sleep(1);
+// Mem::Write<uint32_t>(Mem::Base() + OFFSET_IN_ATTACK + 0x8, 5);
+// Sleep(1);
+// Mem::Write<uint32_t>(Mem::Base() + OFFSET_IN_ATTACK + 0x8, 4);

@@ -169,7 +169,7 @@ int main(void)
 		{
 			vis_time = vis_time + 0x10;
 			dwVisibleTime = rx_read_i32(r5apex, vis_time + 0x4);
-			 dwVisibleTime = 0x1AA0;							//lastVisibleTime - [WeaponSettingsMeta].Base
+			dwVisibleTime = 0x19ad + 0x3;							//lastVisibleTime - [WeaponSettingsMeta].Base
 		}
 	}
 
@@ -238,23 +238,23 @@ int main(void)
 		goto ON_EXIT;
 	}
 
-	/*
-	std::cout << "[+] IClientEntityList: " << std::hex << IClientEntityList - base_module << std::endl;
-	std::cout << "[+] IInputSystem: " << std::hex << IInputSystem - base_module << std::endl;
-	std::cout << "[+] sensitivity: " << std::hex << sensitivity - base_module << std::endl;
+	
+	//std::cout << "[+] IClientEntityList: " << std::hex << IClientEntityList - base_module << std::endl;
+	// std::cout << "[+] IInputSystem: " << std::hex << IInputSystem - base_module << std::endl;
+	// std::cout << "[+] sensitivity: " << std::hex << sensitivity - base_module << std::endl;
 	//std::cout << "[+] dwVisibleTime: " << std::hex << dwVisibleTime << std::endl;
-	//std::cout << "[+] m_iViewAngles: " << std::hex << m_iViewAngles << std::endl;
-	std::cout << "[+] m_bZooming: " << std::hex << m_bZooming << std::endl;
-	std::cout << "[+] m_iCameraAngles: " << std::hex << m_iCameraAngles << std::endl;
-	std::cout << "[+] m_lifeState: " << std::hex << m_lifeState << std::endl;
-	std::cout << "[+] m_iTeamNum: " << std::hex << m_iTeamNum << std::endl;
-	//std::cout << "[+] m_vecAbsOrigin: " << std::hex << m_vecAbsOrigin << std::endl;
-	std::cout << "[+] m_iWeapon: " << std::hex << m_iWeapon << std::endl;
-	std::cout << "[+] m_iBoneMatrix: " << std::hex << m_iBoneMatrix << std::endl;
-	std::cout << "[+] m_playerData: " << std::hex << m_playerData << std::endl;
+	// //std::cout << "[+] m_iViewAngles: " << std::hex << m_iViewAngles << std::endl;
+	// std::cout << "[+] m_bZooming: " << std::hex << m_bZooming << std::endl;
+	// std::cout << "[+] m_iCameraAngles: " << std::hex << m_iCameraAngles << std::endl;
+	// std::cout << "[+] m_lifeState: " << std::hex << m_lifeState << std::endl;
+	// std::cout << "[+] m_iTeamNum: " << std::hex << m_iTeamNum << std::endl;
+	// //std::cout << "[+] m_vecAbsOrigin: " << std::hex << m_vecAbsOrigin << std::endl;
+	// std::cout << "[+] m_iWeapon: " << std::hex << m_iWeapon << std::endl;
+	// std::cout << "[+] m_iBoneMatrix: " << std::hex << m_iBoneMatrix << std::endl;
+	// std::cout << "[+] m_playerData: " << std::hex << m_playerData << std::endl;
 
 	// printf("[+] GameMode: %d", mode);
-	*/
+	
 	
 	// Terminal Menu display boolean values of config
 	Menu::displayConfigValues();
@@ -274,7 +274,7 @@ int main(void)
 
 		// Glow
 		glow.ActivateGlow(r5apex, IClientEntityList, sensitivity, gameMode/* , m_iTeamNum, m_iWeapon, m_lifeState */);
-
+		glow.ActivateGlow2(r5apex, IClientEntityList, sensitivity, gameMode);
 		// Aimbot
 		aimbot.ActivateAimbot(r5apex, IInputSystem, IClientEntityList, sensitivity, m_playerData, m_bZooming);
 

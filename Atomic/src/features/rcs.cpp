@@ -1,8 +1,9 @@
 #include "rcs.hpp"
 
-NoRecoil::NoRecoil() : oldPunch({ 0.0f, 0.0f, 0.0f }), smoothedAngle({ 0.0f, 0.0f, 0.0f }), smoothingFactor(0.09)/* , m_previousPunchPitch(0), m_previousPunchYaw(0) */ {
+NoRecoil::NoRecoil() : oldPunch({ 0.0f, 0.0f, 0.0f }), smoothedAngle({ 0.0f, 0.0f, 0.0f }), smoothingFactor(1.5)/* , m_previousPunchPitch(0), m_previousPunchYaw(0) */ {
     //m_previousPunchPitch = 0.0f;
     //m_previousPunchYaw = 0.0f;
+    // tested smoothingFactor = 0.09, 1.5
 }
 
 NoRecoil::~NoRecoil() {

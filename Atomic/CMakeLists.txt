@@ -15,6 +15,7 @@ add_executable ( ${OUT}
     src/player/localplayer.cpp
     src/player/weapon.cpp
     src/player/input_system.cpp
+    src/player/highlights.cpp
     src/features/glow.cpp
     src/features/aimbot.cpp
     src/features/rcs.cpp

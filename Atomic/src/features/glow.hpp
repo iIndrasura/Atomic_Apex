@@ -13,6 +13,7 @@
 #include "../player/localplayer.hpp"
 #include "../player/player.hpp"
 #include "../player/weapon.hpp"
+#include "../player/highlights.hpp"
 //#include "aimbot.hpp"
 
 class Aimbot;
@@ -24,39 +25,54 @@ private:
     //Aimbot* aimbot;
     Aimbot& aimbot;
 
+    // Class Instance
     LocalPlayer localplayerClass;
     Player playerClass;
     Level levelClass;
     Weapon weaponClass;
     //Aimbot aimbot;
 
-    int iTeamControl;
-    int iLocControl;
+    Highlights highlightClass;      // glow 2 test
 
+    // Vis Check
     struct VisibilityDataStr {
         float lastTime;
         bool lastState;
         uintptr_t lastCheck;
     };
 
-    float lastvis_aim[70];
-    int loopsSinceLastVisible[70];
-    QWORD target_entity;
-
     VisibilityDataStr entityVisibilityData[70];
 
-    bool IsEntityVisible(rx_handle process, QWORD player, VisibilityDataStr& visibilityData);	
+    float lastvis_aim[70];
+    int loopsSinceLastVisible[70];
+
+    // Aimbot entity
+    QWORD target_entity;
+
+    // Highlights 
+    typedef struct {
+    uint8_t InsideFunction;     // InsideFunction
+    uint8_t OutlineFunction;    // OutlineFunction: HIGHLIGHT_OUTLINE_OBJECTIVE
+    uint8_t OutlineRadius;      // OutlineRadius: size * 255 / 8
+    uint8_t VisState;           // (EntityVisible << 6) | State & 0x3F | (AfterPostProcess << 7)
+    } HighlightBits;
+
+    // Variables
+    int iTeamControl;
+    int iLocControl;
+
+    // Functions
+    bool IsEntityVisible(rx_handle process, QWORD player, VisibilityDataStr& visibilityData);
 
 public:
-    Glow(Aimbot& aimbotRef);  // Constructor
-    ~Glow(); // Destructor
-
-    //Aimbot* aimbot; // Declare a pointer to Aimbot
-    // method to set the aimbot pointer
-    //void SetAimbot(Aimbot* aimbotPtr);
+    Glow(Aimbot& aimbotRef);    // Constructor
+    ~Glow();                    // Destructor
 
     bool shouldGlowEnable(rx_handle process);
     void ActivateGlow(rx_handle process, QWORD ClientEntityList, QWORD Sensitivity, int GameMode/* , int TeamNum, int iWeapon, int lifeState */);
+
+    bool shouldGlow2Enable(rx_handle process);
+    void ActivateGlow2(rx_handle process, QWORD ClientEntityList, QWORD Sensitivity, int GameMode );
 };
 
 #endif // GLOW_HPP

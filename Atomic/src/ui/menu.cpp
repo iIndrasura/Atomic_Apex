@@ -61,7 +61,7 @@ void Menu::displayConfigValues() {
     int lineWidth = 40; // Draw Line width
 
     // Print "populated config values..."
-    std::cout << "populated config values......" << RESET << std::endl;
+    std::cout << "config initialized......" << RESET << std::endl;
 
     std::cout << FG_BLUE << "AIMBOT\t\t\t" << RESET << (ConfigValues::AIMSMOOTH ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
     std::cout << FG_BLUE << "TRIGGERBOT\t\t" << RESET << (ConfigValues::TRIGGER_ENABLED ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
