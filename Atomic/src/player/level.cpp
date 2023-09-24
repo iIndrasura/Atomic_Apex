@@ -51,5 +51,6 @@ bool inLobby(rx_handle process, QWORD localPlayer) {
 // In training or firing range check
 bool Level::isTrainingArea(rx_handle process) {
     std::string name = getName(process);
-    return (name.compare("mp_rr_canyonlands_staging_mu1") == 0);        // "mp_rr_canyonlands_staging"
+    return (name.compare("mp_rr_canyonlands_staging_mu1") == 0) || (name.compare("mp_rr_canyonlands_staging") == 0);
 }
+

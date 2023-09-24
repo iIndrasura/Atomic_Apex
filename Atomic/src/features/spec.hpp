@@ -30,7 +30,7 @@ public:
     bool shouldSpectatorCountEnable(rx_handle process);
     
     // Function to update and display the spectator count
-    void UpdateSpectatorCount(rx_handle process, QWORD ClientEntityList);
+    int UpdateSpectatorCount(rx_handle process, QWORD ClientEntityList);
 };
 
 #endif // SPEC_HPP

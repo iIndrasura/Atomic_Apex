@@ -61,6 +61,10 @@ private:
     int iTeamControl;
     int iLocControl;
 
+    // std::chrono::steady_clock::time_point m_lastUpdated = {};
+    // std::vector<QWORD> m_trainingAreaPlayers;
+    // std::vector<QWORD> entities;
+
     // Functions
     bool IsEntityVisible(rx_handle process, QWORD player, VisibilityDataStr& visibilityData);
 
@@ -71,8 +75,12 @@ public:
     bool shouldGlowEnable(rx_handle process);
     void ActivateGlow(rx_handle process, QWORD ClientEntityList, QWORD Sensitivity, int GameMode/* , int TeamNum, int iWeapon, int lifeState */);
 
-    bool shouldGlow2Enable(rx_handle process);
-    void ActivateGlow2(rx_handle process, QWORD ClientEntityList, QWORD Sensitivity, int GameMode );
+    //bool shouldGlow2Enable(rx_handle process);
+    //void ActivateGlow2(rx_handle process, QWORD ClientEntityList, QWORD Sensitivity, int GameMode );
+
+    // Training Area
+    //bool shouldTrainingGlowEnable(rx_handle process);
+    //void ActivateTrainingGlow(rx_handle process );
 };
 
 #endif // GLOW_HPP

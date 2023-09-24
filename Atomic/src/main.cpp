@@ -43,6 +43,7 @@ int main(void)
 	SpectatorCount specCount;
 	SkinChanger skinChanger;
 	AutoGrapple Auto_Grapple;
+	Radar radar;
 
 	/* ------------------ Get Process ID (GetApexProcessId) ------------------ */
 	int pid = GetApexProcessId();
@@ -274,7 +275,8 @@ int main(void)
 
 		// Glow
 		glow.ActivateGlow(r5apex, IClientEntityList, sensitivity, gameMode/* , m_iTeamNum, m_iWeapon, m_lifeState */);
-		glow.ActivateGlow2(r5apex, IClientEntityList, sensitivity, gameMode);
+		//glow.ActivateTrainingGlow(r5apex );
+
 		// Aimbot
 		aimbot.ActivateAimbot(r5apex, IInputSystem, IClientEntityList, sensitivity, m_playerData, m_bZooming);
 
@@ -294,7 +296,10 @@ int main(void)
 		Auto_Grapple.ApplyAutoGrapple(r5apex);
 
 		// Spec Count
-		specCount.UpdateSpectatorCount(r5apex, IClientEntityList);
+		// specCount.UpdateSpectatorCount(r5apex, IClientEntityList);
+
+		// Radar
+		radar.UpdateRadar(r5apex, IClientEntityList);
 
 		// Item ESP, Glow style for weapon and Loba style for consumables/ items
 		itemESP.ApplyItemESP(r5apex, IClientEntityList);

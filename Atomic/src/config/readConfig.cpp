@@ -54,7 +54,7 @@ void readConfig(std::map<std::string, std::string>& config)
 			newConfigFile << "[AIMFOV]" << std::endl;
 			newConfigFile << "AIMFOV_ADS=3.0" << std::endl;
 			newConfigFile << "AIMFOV_HIPFIRE=8.5" << std::endl;
-			newConfigFile << "AIMFOV_DEADZONE=0.10" << std::endl;
+			newConfigFile << "AIMFOV_DEADZONE=0.09" << std::endl;
 
 			//Aim Key
 			newConfigFile << "[AIMKEY]" << std::endl;
@@ -63,12 +63,12 @@ void readConfig(std::map<std::string, std::string>& config)
 
 			//No Recoil
 			newConfigFile << "[NORECOIL]" << std::endl;
-			newConfigFile << "NORECOIL_ENABLED=0" << std::endl;
-			newConfigFile << "NORECOIL_STRENGTH=85.0" << std::endl;
+			newConfigFile << "NORECOIL_ENABLED=1" << std::endl;
+			//newConfigFile << "NORECOIL_STRENGTH=85.0" << std::endl;
 
             //newConfigFile << "NORECOIL2_ENABLED=0" << std::endl;
-			//newConfigFile << "PitchStrength=0.50" << std::endl;
-			//newConfigFile << "YawStrength=0.50" << std::endl;
+			newConfigFile << "PitchStrength=50.0" << std::endl;
+			newConfigFile << "YawStrength=80.0" << std::endl;
 
 			//Trigger Bot
 			newConfigFile << "[TRIGGERBOT]" << std::endl;
@@ -81,7 +81,7 @@ void readConfig(std::map<std::string, std::string>& config)
 			//GLOW
 			newConfigFile << "[GLOW]" << std::endl;
             newConfigFile << "GLOW_ENABLED=1" << std::endl;
-			newConfigFile << "GLOW_ENABLED2=1" << std::endl;
+			//newConfigFile << "GLOW_ENABLED2=1" << std::endl;
 			newConfigFile << "GLOW_ENEMY=1" << std::endl;
 			//newConfigFile << "ENEMY_RGB=0,0,100" << std::endl;
             newConfigFile << "ENEMY_VISIBLE=0,255,0" << std::endl;
@@ -94,9 +94,9 @@ void readConfig(std::map<std::string, std::string>& config)
 			
 			//Chams
 			newConfigFile << "[CHAMS]" << std::endl;
-			newConfigFile << "CHAMS_ENABLED=1" << std::endl;
-			newConfigFile << "WEAPON_CHAMS=1" << std::endl;
-			newConfigFile << "ARMS_CHAMS=1" << std::endl;
+			newConfigFile << "CHAMS_ENABLED=0" << std::endl;
+			newConfigFile << "WEAPON_CHAMS=0" << std::endl;
+			newConfigFile << "ARMS_CHAMS=0" << std::endl;
 			newConfigFile << "CHAMS_RGB=61,2,2" << std::endl;
 			newConfigFile << "CHAM_BORDER=80" << std::endl;
 
@@ -112,14 +112,14 @@ void readConfig(std::map<std::string, std::string>& config)
 
             //SkinChanger
             newConfigFile << "[SKIN_CHANGER]" << std::endl;
-            newConfigFile << "SKIN_CHANGER_ENABLED=1" << std::endl;
+            newConfigFile << "SKIN_CHANGER_ENABLED=0" << std::endl;
             newConfigFile << "WeaponSkinID=15" << std::endl;
             newConfigFile << "PlayerSkinID=16" << std::endl;
 
 			//MISC
 			newConfigFile << "[MISC]" << std::endl;
+			newConfigFile << "RADAR=1" << std::endl;
             newConfigFile << "SPECTATOR_COUNT=1" << std::endl;
-			//newConfigFile << "MAP_RADAR=0" << std::endl;
 			//newConfigFile << "FAKEDUCK=0" << std::endl;
 			//newConfigFile << "FAKEDUCK_KEY=80" << std::endl;
 			//newConfigFile << "TAPSTRAFE=1" << std::endl; //AUTO_GRAPPLE

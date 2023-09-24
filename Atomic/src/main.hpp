@@ -31,6 +31,7 @@
 #include "core/handling.hpp"
 #include "core/math.hpp"
 #include "core/pid.hpp"
+//#include "core/utils.hpp"
 
 #include "features/aimbot.hpp"
 #include "features/glow.hpp"
@@ -38,9 +39,10 @@
 #include "features/rcs.hpp"
 #include "features/item_esp.hpp"
 #include "features/chams.hpp"
-#include "features/spec.hpp"
+//#include "features/spec.hpp"
 #include "features/skin_changer.hpp"
 #include "features/auto_grapple.hpp"
+#include "features/radar.hpp"
 
 #include "offsets/offsets.cpp"
 

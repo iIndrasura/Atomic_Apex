@@ -10,8 +10,7 @@ SkinChanger::~SkinChanger() {
 
 bool SkinChanger::shouldSkinChangerEnable(rx_handle process) {
     if (ConfigValues::SKIN_CHANGER == 1 &&
-        (levelClass.isTrainingArea(process) || levelClass.isPlayable(process) || levelClass.isSpecialMode(process)) 
-        && localplayerClass.isGrounded(process) 
+        (levelClass.isTrainingArea(process) || levelClass.isPlayable(process) || levelClass.isSpecialMode(process))
         /* && localplayerClass.isAlive(process) && !localplayerClass.isKnocked(process) */) {
         
         return true;

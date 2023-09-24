@@ -23,6 +23,7 @@ add_executable ( ${OUT}
     src/features/spec.cpp
     src/features/skin_changer.cpp
     src/features/auto_grapple.cpp
+    src/features/radar.cpp
     src/features/item_esp.cpp
     src/features/triggerbot.cpp
     src/ui/menu.cpp

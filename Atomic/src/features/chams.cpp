@@ -57,7 +57,7 @@ void Chams::ApplyChamsToViewModel(rx_handle process, uintptr_t viewModelPtr, flo
     // rx_write_float(process, viewModelPtr + 0x204, green);
     // rx_write_float(process, viewModelPtr + 0x208, blue);
 
-    uint32_t ContextID = 0/* highlightClass.GetHighlightCurrentContext(process, viewModelPtr) */;
+    uint32_t ContextID = highlightClass.GetHighlightCurrentContext(process, viewModelPtr);
     highlightClass.SetHighlightCurrentContext(process, viewModelPtr, ContextID);      // Glow set context ID aka Enable
     highlightClass.SetHighlightVisibilityType(process, viewModelPtr, 2); 
 

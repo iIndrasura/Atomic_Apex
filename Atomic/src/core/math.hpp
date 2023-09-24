@@ -14,6 +14,7 @@
 #define qmin(a, b) (((a) < (b)) ? (a) : (b))
 
 const float GAME_UNITS_TO_METERS = 0.01905f;
+const float INCHES_TO_METER_RATE = 39.3701;
 
 typedef struct
 {
@@ -73,7 +74,13 @@ float vec_distance(vec3 p0, vec3 p1);
 
 float qatan(float x);
 
+// Distance calculation
+double distanceToMeters(float distance);
 float CalcDistance(vec3 p0, vec3 p1);
+double calculateDistance(float x1, float y1, float z1, float x2, float y2, float z2);
+double calculateDistance2D(float x1, float y1, float x2, float y2);
+void convertPointByYaw(double yaw, double x, double y, double& xOut, double& yOut);
+double calculateDistanceInMeters(float x1, float y1, float z1, float x2, float y2, float z2);
 
 vec3 CalcAngle(vec3 src, vec3 dst);
 

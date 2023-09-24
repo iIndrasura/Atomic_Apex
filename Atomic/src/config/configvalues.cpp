@@ -14,7 +14,9 @@ float ConfigValues::AIMBOT_MAXDISTANCE = 160.0f;
 
 // NORECOIL Configuration
 int ConfigValues::NORECOIL_ENABLED = 0;
-float ConfigValues::NORECOIL_STRENGTH = 80.0f;
+//float ConfigValues::NORECOIL_STRENGTH = 80.0f;
+float ConfigValues::norecoilPitchStrength = 50.0f;
+float ConfigValues::norecoilYawStrength = 50.0f;
 
 // Trigger bot
 int ConfigValues::TRIGGER_ENABLED = 1;
@@ -23,7 +25,7 @@ int ConfigValues::TB_IGNORE_KNOCKED = 1;
 
 // GLOW
 int ConfigValues::GLOW_ENABLED = 1;
-int ConfigValues::GLOW_ENABLED2 = 0;
+//int ConfigValues::GLOW_ENABLED2 = 0;
 int ConfigValues::GLOW_ENEMY = 1;
 int ConfigValues::GLOW_HEALTH = 0;
 float ConfigValues::GLOW_DISTANCE = 200.0f/0.01905f;
@@ -45,7 +47,7 @@ int ConfigValues::WeaponSkinID = 15;
 int ConfigValues::PlayerSkinID = 15;
 
 // Misc
-//int ConfigValues::MAP_RADAR = 0;
+int ConfigValues::RADAR = 0;
 int ConfigValues::AUTO_GRAPPLE = 1;
 int ConfigValues::SPECTATOR_COUNT = 1;
 
@@ -100,7 +102,9 @@ void InitConfigValues(std::map<std::string, std::string>& config)
 
     // NO Recoil
     ConfigValues::NORECOIL_ENABLED = std::stoi(config["NORECOIL.NORECOIL_ENABLED"]);
-    ConfigValues::NORECOIL_STRENGTH = std::stof(config["NORECOIL.NORECOIL_STRENGTH"]);
+    //ConfigValues::NORECOIL_STRENGTH = std::stof(config["NORECOIL.NORECOIL_STRENGTH"]);
+    ConfigValues::norecoilPitchStrength = std::stof(config["NORECOIL.PitchStrength"]);
+    ConfigValues::norecoilYawStrength = std::stof(config["NORECOIL.YawStrength"]);
 
     // Trigger bot
     ConfigValues::TRIGGER_ENABLED = std::stoi(config["TRIGGERBOT.TRIGGER_ENABLED"]);
@@ -112,7 +116,7 @@ void InitConfigValues(std::map<std::string, std::string>& config)
     ConfigValues::GLOW_ENEMY = std::stoi(config["GLOW.GLOW_ENEMY"]);
     ConfigValues::GLOW_HEALTH = std::stoi(config["GLOW.GLOW_HEALTH"]);
     ConfigValues::GLOW_DISTANCE = (std::stof(config["GLOW.GLOW_DISTANCE"])) / 0.01905f;    //convert from meter to in game unit * 0.01905
-    ConfigValues::GLOW_ENABLED2 = std::stoi(config["GLOW.GLOW_ENABLED2"]);
+    //ConfigValues::GLOW_ENABLED2 = std::stoi(config["GLOW.GLOW_ENABLED2"]);
 
     // ESP and ITEM ESP
     ConfigValues::ITEM_ESP_ENABLED = std::stoi(config["ESP.ITEM_ESP_ENABLED"]);
@@ -131,7 +135,7 @@ void InitConfigValues(std::map<std::string, std::string>& config)
     ConfigValues::PlayerSkinID = std::stoi(config["SKIN_CHANGER.PlayerSkinID"]);
 
     // Misc
-    //ConfigValues::MAP_RADAR = std::stoi(config["MISC.MAP_RADAR"]);
+    ConfigValues::RADAR = std::stoi(config["MISC.RADAR"]);
     ConfigValues::AUTO_GRAPPLE = std::stoi(config["MISC.AUTO_GRAPPLE"]);
     ConfigValues::SPECTATOR_COUNT = std::stoi(config["MISC.SPECTATOR_COUNT"]);
 

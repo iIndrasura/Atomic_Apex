@@ -25,9 +25,9 @@ public:
 
     // NORECOIL Configuration
     static int NORECOIL_ENABLED;
-    static float NORECOIL_STRENGTH;
-    //static double norecoilPitchStrength;
-    //static double norecoilYawStrength;
+    //static float NORECOIL_STRENGTH;
+    static float norecoilPitchStrength;
+    static float norecoilYawStrength;
 
     // TRIGGERBOT Configuration
     static int TRIGGER_ENABLED;
@@ -37,7 +37,7 @@ public:
 
     // GLOW Configuration
     static int GLOW_ENABLED;
-    static int GLOW_ENABLED2;
+    //static int GLOW_ENABLED2;
     static int GLOW_ENEMY;
     //static int GLOW_SQUARD;
     static int GLOW_HEALTH;
@@ -63,7 +63,7 @@ public:
     // Misc Configuration
     //static int FAKEDUCK;
     //static int FAKEDUCK_KEY;
-    //static int MAP_RADAR;
+    static int RADAR;
     //static int TAPSTRAFE;
     static int AUTO_GRAPPLE;
     static int SPECTATOR_COUNT;

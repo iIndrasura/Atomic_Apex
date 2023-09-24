@@ -18,7 +18,7 @@ void Menu::loadBar(){
 
         // Print the loading bar
 		std::cout << "\r[" << FG_CYAN << BOLD;
-        for (int i = 0; i < 40; ++i) {
+        for (int i = 0; i < 35; ++i) {
             if (i < numEquals)
                 std::cout << "=";
             else
@@ -58,7 +58,7 @@ void Menu::displayConfigValues(const std::map<std::string, std::string>& config)
  */
 
 void Menu::displayConfigValues() {
-    int lineWidth = 40; // Draw Line width
+    int lineWidth = 36; // Draw Line width
 
     // Print "populated config values..."
     std::cout << "config initialized......" << RESET << std::endl;
@@ -70,10 +70,12 @@ void Menu::displayConfigValues() {
     std::cout << FG_BLUE << "GLOW\t\t\t" << RESET << (ConfigValues::GLOW_ENABLED ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
     std::cout << FG_BLUE << "GLOW_ENEMY\t\t" << RESET << (ConfigValues::GLOW_ENEMY ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
     std::cout << FG_BLUE << "GLOW_HEALTH\t\t" << RESET << (ConfigValues::GLOW_HEALTH ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
-    std::cout << FG_BLUE << "ITEM_ESP\t\t" << RESET << (ConfigValues::ITEM_ESP_ENABLED ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
+    std::cout << FG_BLUE << "ITEM_ESP\t\t" << RESET << (ConfigValues::ITEM_ESP ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
+    std::cout << FG_BLUE << "LOBA_ESP\t\t" << RESET << (ConfigValues::LOBA_ESP ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
     std::cout << FG_BLUE << "WEAPON_CHAMS\t\t" << RESET << (ConfigValues::WEAPON_CHAMS ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
     std::cout << FG_BLUE << "ARMS_CHAMS\t\t" << RESET << (ConfigValues::ARMS_CHAMS ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
     std::cout << FG_BLUE << "SKIN_CHANGER\t\t" << RESET << (ConfigValues::SKIN_CHANGER ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
+    std::cout << FG_BLUE << "RADAR\t\t\t" << RESET << (ConfigValues::RADAR ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
     std::cout << FG_BLUE << "SPEC_COUNT\t\t" << RESET << (ConfigValues::SPECTATOR_COUNT ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
 
     std::cout << std::string(lineWidth, '_') << std::endl;

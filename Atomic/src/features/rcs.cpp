@@ -1,6 +1,6 @@
 #include "rcs.hpp"
 
-NoRecoil::NoRecoil() : oldPunch({ 0.0f, 0.0f, 0.0f }), smoothedAngle({ 0.0f, 0.0f, 0.0f }), smoothingFactor(1.5)/* , m_previousPunchPitch(0), m_previousPunchYaw(0) */ {
+NoRecoil::NoRecoil() : oldPunch({ 0.0f, 0.0f, 0.0f }), smoothedAngle({ 0.0f, 0.0f, 0.0f }), smoothingFactor(2.5)/* , m_previousPunchPitch(0), m_previousPunchYaw(0) */ {
     //m_previousPunchPitch = 0.0f;
     //m_previousPunchYaw = 0.0f;
     // tested smoothingFactor = 0.09, 1.5
@@ -49,8 +49,8 @@ void NoRecoil::ApplyNoRecoil1(rx_handle process, QWORD InputSystem)
         punchAngle.z = rx_read_float(process, localplayer + OFFSETS::m_iAimPunch + 2 * sizeof(float));
 
         vec3 newAngle;
-        newAngle.x = viewAngles.x + (oldPunch.x - punchAngle.x) * (ConfigValues::NORECOIL_STRENGTH / 100.f);
-        newAngle.y = viewAngles.y + (oldPunch.y - punchAngle.y) * (ConfigValues::NORECOIL_STRENGTH / 100.f);
+        newAngle.x = viewAngles.x + (oldPunch.x - punchAngle.x) * (ConfigValues::norecoilPitchStrength / 100.f);
+        newAngle.y = viewAngles.y + (oldPunch.y - punchAngle.y) * (ConfigValues::norecoilYawStrength / 100.f);
         newAngle.z = viewAngles.z;
 
         // Smooth the new angle using EMA

@@ -52,6 +52,8 @@ BYTE rx_read_i8(rx_handle process, QWORD address);
 
 std::string rx_read_string(rx_handle process, QWORD address);
 
+std::string getClassName(rx_handle process, QWORD entityAddress);
+
 float rx_read_float(rx_handle process, QWORD address);
 
 BOOL rx_write_i32(rx_handle process, QWORD address, DWORD value);

@@ -19,6 +19,11 @@ QWORD Player::getPlayerPointer(rx_handle process) {
     return m_basePointer;
 }
 
+void Player::markForPointerResolution()
+{
+    m_basePointer = 0;
+}
+
 QWORD Player::getBonePointer(rx_handle process) {
     if (m_bonePointer == 0) {
         QWORD basePointer = getPlayerPointer(process);
@@ -39,6 +44,27 @@ std::string Player::getSignifierName(rx_handle process) {
     QWORD basePointer = getPlayerPointer(process);
     QWORD ptrLong = basePointer + OFFSETS::SIGNIFIER_NAME;
     std::string result = rx_read_string(process, ptrLong);
+    return result;
+}
+
+float Player::getLocationX(rx_handle process, QWORD player)
+{
+    QWORD ptrLong = player + OFFSETS::LOCAL_ORIGIN;
+    float result = rx_read_float(process, ptrLong);
+    return result;
+}
+
+float Player::getLocationY(rx_handle process, QWORD player)
+{
+    QWORD ptrLong = player + OFFSETS::LOCAL_ORIGIN + sizeof(float);
+    float result = rx_read_float(process, ptrLong);
+    return result;
+}
+
+float Player::getLocationZ(rx_handle process, QWORD player)
+{
+    QWORD ptrLong = player + OFFSETS::LOCAL_ORIGIN + (sizeof(float) * 2);
+    float result = rx_read_float(process, ptrLong);
     return result;
 }
 
@@ -200,4 +226,40 @@ vec3 Player::GetBonePosition(rx_handle game_process, QWORD entity_address, int i
 	bonepos.z = matrix.z + position.z;
 
 	return bonepos;
+}
+
+bool Player::isNPC(rx_handle process) {
+    QWORD bonePointer = getPlayerPointer(process);
+
+    // Check if the flag is already set (cached result)
+    if (!m_isNPC) {
+        std::string className = getClassName(process, bonePointer);
+        m_isNPC = bonePointer > 0 && (className == "CAI_BaseNPC");
+    }
+    return m_isNPC;
+}
+
+bool Player::isDead(rx_handle process)
+{
+    QWORD basePointer = getPlayerPointer(process);
+    QWORD ptrLong = basePointer + OFFSETS::LIFE_STATE;
+    short result = rx_read_i16(process, ptrLong);
+    return result > 0;
+}
+
+bool Player::isValid(rx_handle process)
+{
+    return getPlayerPointer(process) > 0 && !isDead(process);
+}
+
+std::string Player::getInvalidReason(rx_handle process)
+{
+    if (getPlayerPointer(process) == 0)
+        return "Unresolved base pointer";
+    else if (isDead(process))
+        return "Player is dead";
+    else if (getSignifierName(process).empty())
+        return "Name is empty";
+    else
+        return "Player is valid";
 }

@@ -108,13 +108,53 @@ float qatan(float x)
 	return qatan2(x, 1);
 }
 
+// Convert distance to meters inches to meter
+double distanceToMeters(float distance)
+{
+	return distance / INCHES_TO_METER_RATE;
+}
+
+// calculate Distance for 3D vector
 float CalcDistance(vec3 p0, vec3 p1) {
     float dx = p0.x - p1.x;
     float dy = p0.y - p1.y;
     float dz = p0.z - p1.z;
     float distance = sqrtf(powf(dx, 2) + powf(dy, 2) + powf(dz, 2));
     return distance;
- }
+}
+
+// calculate Distance for 3D object but takes x, y, z values separately
+double calculateDistance(float x1, float y1, float z1, float x2, float y2, float z2)
+{
+	float dx = (x1 - x2);
+	float dy = (y1 - y2);
+	float dz = (z1 - z2);
+	float distance = sqrt(pow(dx, 2) + pow(dy, 2) + pow(dz, 2));
+	return distance;
+}
+
+// calculate Distance for 2D object but takes x, y values separately
+double calculateDistance2D(float x1, float y1, float x2, float y2)
+{
+	float dx = (x1 - x2);
+	float dy = (y1 - y2);
+	float distance = sqrt(pow(dx, 2) + pow(dy, 2));
+	return distance;
+}
+
+void convertPointByYaw(double yaw, double x, double y, double& xOut, double& yOut) 
+{
+	double rad = (90 - yaw) / 180 * M_PI;
+	double cos = std::cos(rad);
+	double sin = std::sin(rad);
+	xOut = x * cos - y * sin;
+	yOut = y * cos + x * sin;
+}
+
+double calculateDistanceInMeters(float x1, float y1, float z1, float x2, float y2, float z2)
+{
+	return distanceToMeters(calculateDistance(x1, y1, z1, x2, y2, z2));
+}
 
 vec3 CalcAngle(vec3 src, vec3 dst)
 {

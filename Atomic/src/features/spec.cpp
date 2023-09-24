@@ -10,13 +10,13 @@ SpectatorCount::~SpectatorCount() {
 
 bool SpectatorCount::shouldSpectatorCountEnable(rx_handle process) {
     // Check if spectator count should be enabled based on game state and configuration
-    if (ConfigValues::SPECTATOR_COUNT == 1 && (levelClass.isTrainingArea(process) || levelClass.isPlayable(process) || levelClass.isSpecialMode(process))) {
+    if (ConfigValues::SPECTATOR_COUNT == 1 && (/* levelClass.isTrainingArea(process) || */ levelClass.isPlayable(process) || levelClass.isSpecialMode(process))) {
         return true;
     }
     return false;
 }
 
-void SpectatorCount::UpdateSpectatorCount(rx_handle process, QWORD ClientEntityList) 
+int SpectatorCount::UpdateSpectatorCount(rx_handle process, QWORD ClientEntityList) 
 {
     if (shouldSpectatorCountEnable(process)) 
     {
@@ -48,7 +48,7 @@ void SpectatorCount::UpdateSpectatorCount(rx_handle process, QWORD ClientEntityL
             //if (targetYaw == localYaw && rx_read_i32(process, player + OFFSETS::m_iHealth) == 0)
                 spectatorCount++;
         }
-
+        /* 
         // Check if the value has changed
         if (spectatorCount != previousSpectatorCount) 
         {
@@ -68,5 +68,15 @@ void SpectatorCount::UpdateSpectatorCount(rx_handle process, QWORD ClientEntityL
             previousSpectatorCount = spectatorCount;
             fflush(stdout);
         }
+        */
+        if (spectatorCount != previousSpectatorCount) {
+            previousSpectatorCount = spectatorCount;
+            return spectatorCount;      // Return spectatorCount only when it has changed
+        }
+
+        return previousSpectatorCount;
     }
+
+    return previousSpectatorCount == 0;      // Return the previous value if there was no change
 }
+

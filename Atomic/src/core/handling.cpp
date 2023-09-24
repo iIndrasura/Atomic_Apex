@@ -41,6 +41,30 @@ std::string rx_read_string(rx_handle process, QWORD address) {
     return std::string(buffer, length);
 }
 
+std::string getClassName(rx_handle process, QWORD entityAddress)
+{
+    char buffer[32] = {0}; // Initialize buffer with zeros.
+
+    // Read the ClientClass's network name for the given entity
+    QWORD clientNetworkVtable = rx_read_i64(process, entityAddress + 3 * 8);
+    QWORD getClientEntity = rx_read_i64(process, clientNetworkVtable + 3 * 8);
+    int offset = rx_read_i32(process, getClientEntity + 3);
+    QWORD networkNamePtr = rx_read_i64(process, getClientEntity + offset + 7 + 16);
+    rx_read_process(process, networkNamePtr, buffer, 32);
+
+    std::string result;
+    
+    // Return up to 32 chars from the network name
+    size_t len = 0;
+    for (; len < 32; ++len) {
+        if (buffer[len] == '\0')
+            break;
+    }
+    result.assign(buffer, len);
+
+    return result;
+}
+
 float rx_read_float(rx_handle process, QWORD address)
 {
 	float buffer = 0;

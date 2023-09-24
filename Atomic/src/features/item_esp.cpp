@@ -60,7 +60,7 @@ void ItemESP::ApplyItemESP(rx_handle process, QWORD ClientEntityList)
                 // rx_write_float(process, itemEntity + 0x208, 2.f);
 
                 uint32_t ContextID = highlightClass.GetHighlightCurrentContext(process, itemEntity);         // 1
-                uint32_t FunctionParameterIndexId = 63;
+                uint32_t FunctionParameterIndexId = 64;
                 highlightClass.SetHighlightCurrentContext(process, itemEntity, ContextID);
                 highlightClass.SetHighlightVisibilityType(process, itemEntity, 2);
                 
@@ -83,7 +83,7 @@ void ItemESP::ApplyItemESP(rx_handle process, QWORD ClientEntityList)
             {
                 //rx_write_i32(process, itemEntity + 0x2F0, 1363184265);      // highlightFunctionBits item glow offset
                 
-                uint32_t FunctionParameterIndexId = 64;
+                //uint32_t FunctionParameterIndexId = 64;
                 uint32_t ContextID = highlightClass.GetHighlightCurrentContext(process, itemEntity);
                 //highlightClass.SetHighlightCurrentContext(process, itemEntity, ContextID);
                 //highlightClass.SetHighlightVisibilityType(process, itemEntity, 2);
