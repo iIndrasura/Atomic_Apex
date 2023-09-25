@@ -2,9 +2,11 @@
 
 Aimbot::Aimbot() : target_entity_(0), previous_tick(0) {
     // Initialize member variables
-    fovAds = ConfigValues::AIMFOV_ADS;
-    fovHipfire = ConfigValues::AIMFOV_HIPFIRE;
-    fovdeadzone = ConfigValues::AIMFOV_DEADZONE;
+    maxfov_Ads = ConfigValues::AIMFOV_ADS_MAX;
+    minfov_Ads = ConfigValues::AIMFOV_ADS_MIN;
+    fov_Hipfire = ConfigValues::AIMFOV_HIPFIRE;
+    fov_deadzone = ConfigValues::AIMFOV_DEADZONE;
+    MaxDistance = ConfigValues::AIMBOT_MAXDISTANCE;
 }
 
 Aimbot::~Aimbot() {
@@ -26,6 +28,7 @@ void Aimbot::ActivateAimbot(rx_handle process, QWORD InputSystem, QWORD ClientEn
     //fovAds = ConfigValues::AIMFOV_ADS;
     //fovHipfire = ConfigValues::AIMFOV_HIPFIRE;
     //fovdeadzone = ConfigValues::AIMFOV_DEADZONE;
+    float fovAds = 0.0f;
 
     QWORD localplayer = localplayerClass.getLocalplayerPointer(process);
     
@@ -71,13 +74,22 @@ void Aimbot::ActivateAimbot(rx_handle process, QWORD InputSystem, QWORD ClientEn
 
         float distance = ((CalcDistance(local_position, enmPos) / 100) * 2);   // need to verify
         //printf("  	distance %f", ((CalcDistance(local_position, enmPos))/100)*2);
-        bool far = (distance >= ConfigValues::AIMBOT_MAXDISTANCE);
+        bool far = (distance >= MaxDistance);
 
         if (far)
         {
             //printf(" Cancelling ");
             return;
         }
+
+        /* --------------------- DYNAMIC FOV -----------------------*/
+        // Calculate the scaling factor based on distance
+        float distanceFactor = std::min(1.0f, std::max(0.0f, 1.0f - (distance / MaxDistance)));
+        // Calculate the scaled fovdeadzone
+        float scaledFovDeadzone = fov_deadzone * distanceFactor;
+
+        // Calculate the scaled fovAds within the range of minfovAds and maxfovAds
+        float scaledFovAds = minfov_Ads + distanceFactor * (maxfov_Ads - minfov_Ads);
 
         //printf(" Continue ");
 
@@ -127,9 +139,9 @@ void Aimbot::ActivateAimbot(rx_handle process, QWORD InputSystem, QWORD ClientEn
         if (rx_read_i8(process, localplayer + bZooming))
         {
             fl_sensitivity = (zoom_fov / 90.0f) * fl_sensitivity;
-            fovAds = ConfigValues::AIMFOV_ADS;
+            fovAds = scaledFovAds;
         }else{
-            fovAds = fovHipfire;
+            fovAds = fov_Hipfire;
         }
 
 
@@ -142,7 +154,8 @@ void Aimbot::ActivateAimbot(rx_handle process, QWORD InputSystem, QWORD ClientEn
             vec_clamp(&angles);
 
             // Apply DeadZone on angles
-            angles = ApplyDeadzone(angles, fovdeadzone);
+            // angles = ApplyDeadzone(angles, fovdeadzone);
+            angles = ApplyDeadzone(angles, scaledFovDeadzone);
 
             float x = angles.y;
             float y = angles.x;

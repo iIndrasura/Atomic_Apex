@@ -1,8 +1,15 @@
 #include "radar.hpp"
 #include "../core/utils.hpp"
 
+Radar::Radar() {
+    isSpectatorEnable = ConfigValues::SPECTATOR_COUNT;
+    isRadarEnable = ConfigValues::RADAR;
+
+    // Constructor, those values are determined and set once during object construction or initialization. After that, they won't be re-evaluated every time the if statements are encountered. 
+}
+
 bool Radar::shouldRadarEnable(rx_handle process) {
-    if (ConfigValues::RADAR == 1 &&
+    if ( (ConfigValues::RADAR == 1 || ConfigValues::SPECTATOR_COUNT == 1) &&
         (levelClass.isTrainingArea(process) || levelClass.isPlayable(process) || levelClass.isSpecialMode(process))) {
         
         return true;
@@ -27,6 +34,7 @@ ScanResult Radar::scan(const char* nowStr, rx_handle process, QWORD ClientEntity
     {
         QWORD player = playerClass.GetClientEntity(process, ClientEntityList, i);
 
+        // is player valid
         if (player == 0) {
             continue;
         }
@@ -121,48 +129,57 @@ void Radar::UpdateRadar(rx_handle process, QWORD ClientEntityList) {
         // Save the cursor position
         printf("\e[s");
 
-        // Print the spectator count
-        if (spectatorCount >= 1) {
-            printf("\t\t\033[32mSpectator: %-3d\033[0m\n", spectatorCount); // Green color
-        } else {
-            printf("\t\tSpectator: %-3d\n", spectatorCount);
-        }
+        printf("[%s]", nowStr.data());
 
-        // Determine the color for Min Distance based on new thresholds
-        std::string minDistanceColor;
-        if (result.minDistance <= 50) {
-            minDistanceColor = "\033[0;31m"; // Red color
-        } else if (result.minDistance <= 100) {
-            minDistanceColor = "\033[0;33m"; // Yellow color
-        } else if (result.minDistance <= 200) {
-            minDistanceColor = "\033[0;34m"; // Blue color
-        } else {
-            minDistanceColor = "\033[0;37m"; // White color
-        }
-
-        printf("[%s] Min Distance: %s%d\033[0m, Radar:\n", nowStr.data(), minDistanceColor.c_str(), result.minDistance);
-
-        for (size_t i = 0; i < result.enemiesMap.size(); ++i) {
-            const auto& row = result.enemiesMap[i];
-            printf("[ ");
-            for (size_t j = 0; j < row.size(); ++j) {
-                bool isClose = (i >= 2 && i < 7 && j >= 2 && j < 7);
-                int count = row[j];
-                if (isClose && count >= 1) {
-                    printf("\033[0;31m%2d\033[0m ", count);
-                } else if (isClose) {
-                    printf("\033[0;33m%2d\033[0m ", count);
-                } else {
-                    printf("%2d ", count);
-                }
+        if( isSpectatorEnable )
+        {
+            // Print the spectator count
+            if (spectatorCount >= 1) {
+                printf("\t\033[32mSpectator: %-3d\033[0m\n", spectatorCount); // Green color
+            } else {
+                printf("\tSpectator: %-3d\n", spectatorCount);
             }
-            printf("]\n");
+        }
+
+        if ( isRadarEnable ) 
+        {
+            // Determine the color for Min Distance based on new thresholds
+            std::string minDistanceColor;
+            if (result.minDistance <= 50) {
+                minDistanceColor = "\033[0;31m"; // Red color
+            } else if (result.minDistance <= 100) {
+                minDistanceColor = "\033[0;33m"; // Yellow color
+            } else if (result.minDistance <= 200) {
+                minDistanceColor = "\033[0;34m"; // Blue color
+            } else {
+                minDistanceColor = "\033[0;37m"; // White color
+            }
+
+            printf("Min Distance: %s%d\033[0m, Radar:\n", minDistanceColor.c_str(), result.minDistance);
+
+            for (size_t i = 0; i < result.enemiesMap.size(); ++i) {
+                const auto& row = result.enemiesMap[i];
+                printf("[ ");
+                for (size_t j = 0; j < row.size(); ++j) {
+                    bool isClose = (i >= 2 && i < 7 && j >= 2 && j < 7);
+                    int count = row[j];
+                    if (isClose && count >= 1) {
+                        printf("\033[0;31m%2d\033[0m ", count);
+                    } else if (isClose) {
+                        printf("\033[0;33m%2d\033[0m ", count);
+                    } else {
+                        printf("%2d ", count);
+                    }
+                }
+                printf("]\n");
+            }
         }
         
         // Restore the cursor position
         printf("\e[u");
 
         // Clear everything between the saved and restored positions
+        //cleanBetween();     //printf("\e[J");
         printf("\e[J");
     }
 }

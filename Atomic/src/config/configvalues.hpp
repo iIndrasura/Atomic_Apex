@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <fstream>
 #include <chrono>
+#include <unordered_set>
 
 class ConfigValues {
 public:
@@ -17,7 +18,8 @@ public:
     static int AIMBOT_ENABLED;
     static int AIMKEY;
     static int AIMKEY2;
-    static float AIMFOV_ADS;
+    static float AIMFOV_ADS_MAX;
+    static float AIMFOV_ADS_MIN;
     static float AIMFOV_HIPFIRE;
     static float AIMFOV_DEADZONE;
     static std::chrono::milliseconds AIMBOT_SLEEP;
@@ -47,6 +49,7 @@ public:
     static int ITEM_ESP_ENABLED;
     static int ITEM_ESP;
     static int LOBA_ESP;
+    static int LOBA_ESP2;
     //static int itemESP_toggle_key;
 
     // Chams Configuration
@@ -72,10 +75,12 @@ public:
     static std::vector<int> BONE_LIST;
 
     // Item ESP IDs Configuration
-    static std::vector<int> ITEM_ESP_IDS;
+    //static std::vector<int> ITEM_ESP_IDS;
+    static std::unordered_set<int> ITEM_ESP_IDS;
 
     // Loba ESP IDs Configuration
-    static std::vector<int> LOBA_ESP_IDS;
+    //static std::vector<int> LOBA_ESP_IDS;
+    static std::unordered_set<int> LOBA_ESP_IDS;
 
     // Item ESP RGB Color Configuration
     static float ITEM_RED_VALUE;

@@ -13,12 +13,22 @@ float maxdistance = 160.0f;				// aim assist maximum range in meters
 */
 
 // Function to split a string into components
-bool IsInItemEspIds(int itemID, const std::vector<int>& itemEspIds) {
-    return std::find(itemEspIds.begin(), itemEspIds.end(), itemID) != itemEspIds.end();
+// bool IsInItemEspIds(int itemID, const std::vector<int>& itemEspIds) {
+//     return std::find(itemEspIds.begin(), itemEspIds.end(), itemID) != itemEspIds.end();
+// }
+
+bool IsInItemEspIds(int itemID, const std::unordered_set<int>& itemEspIds) {
+    return itemEspIds.find(itemID) != itemEspIds.end();
 }
 
-bool IsInLobaEspIds(int itemID, const std::vector<int>& lobaEspIds) {
-    return std::find(lobaEspIds.begin(), lobaEspIds.end(), itemID) != lobaEspIds.end();
+// using Vector to store data for loba
+// bool IsInLobaEspIds(int itemID, const std::vector<int>& lobaEspIds) {
+//     return std::find(lobaEspIds.begin(), lobaEspIds.end(), itemID) != lobaEspIds.end();
+// }
+
+// using unordered_set to store data for loba
+bool IsInLobaEspIds(int itemID, const std::unordered_set<int>& lobaEspIds) {
+    return lobaEspIds.find(itemID) != lobaEspIds.end();
 }
 
 void splitString(const std::string& input, char delimiter, std::vector<std::string>& output) {
@@ -52,7 +62,8 @@ void readConfig(std::map<std::string, std::string>& config)
 
 			//Aim FOV
 			newConfigFile << "[AIMFOV]" << std::endl;
-			newConfigFile << "AIMFOV_ADS=3.0" << std::endl;
+			newConfigFile << "AIMFOV_ADS_MAX=5.0" << std::endl;
+			newConfigFile << "AIMFOV_ADS_MIN=2.5" << std::endl;
 			newConfigFile << "AIMFOV_HIPFIRE=8.5" << std::endl;
 			newConfigFile << "AIMFOV_DEADZONE=0.09" << std::endl;
 
@@ -106,8 +117,9 @@ void readConfig(std::map<std::string, std::string>& config)
 			//newConfigFile << "ITEM_ESP_TOGGLE=26" << std::endl;
 			newConfigFile << "ITEM_ESP=1" << std::endl;
 			newConfigFile << "ITEM_ESP_RGB=255,215,0" << std::endl;
-			newConfigFile << "LOBA_ESP=1" << std::endl;
 			newConfigFile << "ITEM_ESP_IDS=80,90,28,105,134,150" << std::endl;
+			newConfigFile << "LOBA_ESP=0" << std::endl;
+			newConfigFile << "LOBA_ESP2=1" << std::endl;
             newConfigFile << "LOBA_ESP_IDS=182,183,185,186,199,208,209" << std::endl;
 
             //SkinChanger

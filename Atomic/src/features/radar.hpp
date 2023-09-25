@@ -28,24 +28,29 @@ static const std::array<int, 8> Distances { -200, -100, -50, -5, 5, 50, 100, 200
 
 class Radar {
 
-    private:
-        LocalPlayer localplayerClass;
-        Level levelClass;
-        Player playerClass;
+private:
+    LocalPlayer localplayerClass;
+    Level levelClass;
+    Player playerClass;
 
-        SpectatorCount specCount;
+    SpectatorCount specCount;
 
-        std::array<char, 32> nowStr;
+    std::array<char, 32> nowStr;
 
-        int EntTeam;
-        int LocTeam;
-        double yaw;
-        QWORD localplayer;
+    int EntTeam;
+    int LocTeam;
+    double yaw;
+    QWORD localplayer;
 
-    public:
-        bool shouldRadarEnable(rx_handle process);
-        void UpdateRadar(rx_handle process, QWORD ClientEntityList);
-        ScanResult scan(const char* nowStr, rx_handle process, QWORD ClientEntityList);
+    bool isSpectatorEnable;
+    bool isRadarEnable;
+
+public:
+    Radar();
+
+    bool shouldRadarEnable(rx_handle process);
+    void UpdateRadar(rx_handle process, QWORD ClientEntityList);
+    ScanResult scan(const char* nowStr, rx_handle process, QWORD ClientEntityList);
 };
 
 #endif 

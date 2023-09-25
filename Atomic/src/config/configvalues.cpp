@@ -6,7 +6,8 @@ float ConfigValues::AIMSMOOTH = 18.5f;
 int ConfigValues::AIMBOT_ENABLED = 1;
 int ConfigValues::AIMKEY = 107;
 int ConfigValues::AIMKEY2 = 108;
-float ConfigValues::AIMFOV_ADS = 3.0f;
+float ConfigValues::AIMFOV_ADS_MAX = 3.0f;
+float ConfigValues::AIMFOV_ADS_MIN = 1.0f;
 float ConfigValues::AIMFOV_HIPFIRE = 8.5f;
 float ConfigValues::AIMFOV_DEADZONE = 0.09f;
 std::chrono::milliseconds ConfigValues::AIMBOT_SLEEP(10);
@@ -33,7 +34,8 @@ float ConfigValues::GLOW_DISTANCE = 200.0f/0.01905f;
 // ESP and ITEM ESP
 int ConfigValues::ITEM_ESP_ENABLED = 1;
 int ConfigValues::ITEM_ESP = 1;
-int ConfigValues::LOBA_ESP = 1;
+int ConfigValues::LOBA_ESP = 0;
+int ConfigValues::LOBA_ESP2 = 1;
 
 // Chams
 int ConfigValues::CHAMS_ENABLED = 1;
@@ -55,10 +57,12 @@ int ConfigValues::SPECTATOR_COUNT = 1;
 std::vector<int> ConfigValues::BONE_LIST{0, 2, 3, 5, 8};
 
 // Item ESP IDs
-std::vector<int> ConfigValues::ITEM_ESP_IDS{80, 90, 28, 105, 134, 150};
+//std::vector<int> ConfigValues::ITEM_ESP_IDS{80, 90, 28, 105, 134, 150};
+std::unordered_set<int> ConfigValues::ITEM_ESP_IDS = {80, 90, 28, 105, 134, 150};
 
 // Loba ESP IDs
-std::vector<int> ConfigValues::LOBA_ESP_IDS{182, 183, 185, 186, 199, 208, 209};
+//std::vector<int> ConfigValues::LOBA_ESP_IDS{182, 183, 185, 186, 199, 208, 209};
+std::unordered_set<int> ConfigValues::LOBA_ESP_IDS = {182, 183, 185, 186, 199, 208, 209};
 
 // Item RGB values
 float ConfigValues::ITEM_RED_VALUE = 255.0f;
@@ -96,7 +100,8 @@ void InitConfigValues(std::map<std::string, std::string>& config)
     ConfigValues::AIMKEY2 = std::stoi(config["AIMKEY.AIMKEY2"]);
 
     // Aim FOV
-    ConfigValues::AIMFOV_ADS = std::stof(config["AIMFOV.AIMFOV_ADS"]);
+    ConfigValues::AIMFOV_ADS_MAX = std::stof(config["AIMFOV.AIMFOV_ADS_MAX"]);
+    ConfigValues::AIMFOV_ADS_MIN = std::stof(config["AIMFOV.AIMFOV_ADS_MIN"]);
     ConfigValues::AIMFOV_HIPFIRE = std::stof(config["AIMFOV.AIMFOV_HIPFIRE"]);
     ConfigValues::AIMFOV_DEADZONE = std::stof(config["AIMFOV.AIMFOV_DEADZONE"]);
 
@@ -122,6 +127,7 @@ void InitConfigValues(std::map<std::string, std::string>& config)
     ConfigValues::ITEM_ESP_ENABLED = std::stoi(config["ESP.ITEM_ESP_ENABLED"]);
     ConfigValues::ITEM_ESP = std::stoi(config["ESP.ITEM_ESP"]);
     ConfigValues::LOBA_ESP = std::stoi(config["ESP.LOBA_ESP"]);
+    ConfigValues::LOBA_ESP2 = std::stoi(config["ESP.LOBA_ESP2"]);
 
     // Chams
     ConfigValues::CHAMS_ENABLED = std::stoi(config["CHAMS.CHAMS_ENABLED"]);
@@ -151,6 +157,16 @@ void InitConfigValues(std::map<std::string, std::string>& config)
     ConfigValues::BONE_LIST = boneList;
 
     // Item ESP IDs ---------------------------------------------
+    std::unordered_set<int> itemEspIds; // Use unordered_set here
+    std::istringstream itemEspStream(config["ESP.ITEM_ESP_IDS"]);
+    std::string itemId;
+    while (std::getline(itemEspStream, itemId, ',')) {
+        itemEspIds.insert(std::stoi(itemId)); // Use insert to add items to the unordered_set
+    }
+
+    ConfigValues::ITEM_ESP_IDS = itemEspIds;
+
+    /* 
     std::vector<int> itemEspIds;
     std::istringstream itemEspStream(config["ESP.ITEM_ESP_IDS"]);
     std::string itemId;
@@ -159,8 +175,20 @@ void InitConfigValues(std::map<std::string, std::string>& config)
     }
 
     ConfigValues::ITEM_ESP_IDS = itemEspIds;
+    */
 
     // Loba ESP IDs ---------------------------------------------
+    std::unordered_set<int> lobaEspIds; // Use unordered_set here
+    std::istringstream lobaEspStream(config["ESP.LOBA_ESP_IDS"]);
+    std::string lobaId;
+    while (std::getline(lobaEspStream, lobaId, ',')) {
+        lobaEspIds.insert(std::stoi(lobaId)); // Use insert to add items to the unordered_set
+    }
+
+    ConfigValues::LOBA_ESP_IDS = lobaEspIds;
+
+
+    /* 
     std::vector<int> lobaEspIds;
     std::istringstream lobaEspStream(config["ESP.LOBA_ESP_IDS"]);
     std::string lobaId;
@@ -169,6 +197,7 @@ void InitConfigValues(std::map<std::string, std::string>& config)
     }
 
     ConfigValues::LOBA_ESP_IDS = lobaEspIds;
+    */
 
     // cham RGB color ---------------------------------------------
     std::string chamRgbValue = config["CHAMS.CHAMS_RGB"];

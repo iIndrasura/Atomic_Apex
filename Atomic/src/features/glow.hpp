@@ -61,6 +61,9 @@ private:
     int iTeamControl;
     int iLocControl;
 
+    uint32_t FunctionParameterIndexId;
+    uint32_t ContextID;
+
     // std::chrono::steady_clock::time_point m_lastUpdated = {};
     // std::vector<QWORD> m_trainingAreaPlayers;
     // std::vector<QWORD> entities;

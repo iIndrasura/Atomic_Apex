@@ -16,18 +16,6 @@ bool ItemESP::shouldItemESPEnable(rx_handle process) {
     return false;
 }
 
-/*
-bool ItemESP::shouldItemESPEnable(rx_handle process) {
-    if (ConfigValues::ITEM_ESP_ENABLED != 1)
-        return false;
-
-    if (!(levelClass.isTrainingArea(process) || levelClass.isPlayable(process) || levelClass.isSpecialMode(process)))
-        return false;
-
-    return true;
-}
-*/
-
 void ItemESP::ApplyItemESP(rx_handle process, QWORD ClientEntityList) 
 {
     // Increment the delay counter with each loop iteration
@@ -48,65 +36,92 @@ void ItemESP::ApplyItemESP(rx_handle process, QWORD ClientEntityList)
             QWORD itemEntity = playerClass.GetClientEntity(process, ClientEntityList, k);
             itemID = rx_read_int(process, itemEntity + OFFSETS::m_itemId);
 
+            uint32_t ContextID = 1;
+            uint32_t FunctionParameterIndexId;
+
             // Apply ITEM_ESP settings only if ITEM_ESP is enabled and itemID is in ITEM_ESP_IDS
-            if (ConfigValues::ITEM_ESP == 1 && IsInItemEspIds(itemID, ConfigValues::ITEM_ESP_IDS)) 
+            if (ConfigValues::ITEM_ESP == 1 && (itemEspIds.find(itemID) != itemEspIds.end()))
             {
-                // rx_write_i32(process, itemEntity + 0x3F8, 1);
-                // rx_write_i32(process, itemEntity + 0x400, 2);
-                // rx_write_i32(process, itemEntity + 0x2F4, 1512990053);
+                FunctionParameterIndexId = 58;
+                red = ConfigValues::ITEM_RED_VALUE;
+                green = ConfigValues::ITEM_GREEN_VALUE;
+                blue = ConfigValues::ITEM_BLUE_VALUE;
 
-                // rx_write_float(process, itemEntity + 0x200, 61.f);
-                // rx_write_float(process, itemEntity + 0x204, 2.f);
-                // rx_write_float(process, itemEntity + 0x208, 2.f);
-
-                uint32_t ContextID = highlightClass.GetHighlightCurrentContext(process, itemEntity);         // 1
-                uint32_t FunctionParameterIndexId = 64;
                 highlightClass.SetHighlightCurrentContext(process, itemEntity, ContextID);
                 highlightClass.SetHighlightVisibilityType(process, itemEntity, 2);
-                
+
                 highlightClass.SetHighlightActiveState(process, itemEntity, ContextID, FunctionParameterIndexId);
-                highlightClass.SetHighlightFunctions(process, itemEntity, FunctionParameterIndexId, 137, 138, 1.0f, true, 0, false);
+                highlightClass.SetHighlightFunctions(process, itemEntity, FunctionParameterIndexId, 137, 125, 1.5f, true, 0, false);
                 
-                // set color    { 1.0f, 0.0f, 0.0f }
-                Color color = { 
-                    ConfigValues::ITEM_RED_VALUE, 
-                    ConfigValues::ITEM_GREEN_VALUE, 
-                    ConfigValues::ITEM_BLUE_VALUE 
-                };
+                // set color
+                Color color = { red, green, blue };
                 highlightClass.SetHighlightParameter(process, itemEntity, FunctionParameterIndexId, &color.r);
 
-                //highlightClass.SetHighlightDistance(process, itemEntity, 3149.6f);  // 60 meters divided by 0.01905 distance factor
+                highlightClass.SetHighlightDistance(process, itemEntity, 3149.6f);          // 60 meters divided by 0.01905
             }
 
             // Apply LOBA_ESP settings only if LOBA_ESP is enabled and itemID is in LOBA_ESP_IDS
-            if (ConfigValues::LOBA_ESP == 1 && IsInLobaEspIds(itemID, ConfigValues::LOBA_ESP_IDS)) 
+            if (ConfigValues::LOBA_ESP == 1 /* && IsInLobaEspIds(itemID, ConfigValues::LOBA_ESP_IDS) */) 
             {
-                //rx_write_i32(process, itemEntity + 0x2F0, 1363184265);      // highlightFunctionBits item glow offset
-                
-                //uint32_t FunctionParameterIndexId = 64;
-                uint32_t ContextID = highlightClass.GetHighlightCurrentContext(process, itemEntity);
-                //highlightClass.SetHighlightCurrentContext(process, itemEntity, ContextID);
-                //highlightClass.SetHighlightVisibilityType(process, itemEntity, 2);
-
-                //highlightClass.SetHighlightActiveState(process, itemEntity, ContextID, FunctionParameterIndexId);
+                ContextID = highlightClass.GetHighlightCurrentContext(process, itemEntity);
                 highlightClass.SetHighlightFunctionsWithActiveState(process, itemEntity, ContextID, 137, 138, 3.0f, true, 0, false);
+            }
+            else if (ConfigValues::LOBA_ESP2 == 1 && (lobaEspIds.find(itemID) != lobaEspIds.end()))
+            {   
+                // Epic Items
+                if (redItems.find(itemID) != redItems.end()) 
+                {
+                    FunctionParameterIndexId = 59;
+                    red = 0.8f;
+                    green = 0.0f;
+                    blue = 0.0f;
+                }
+                // Gold Items
+                else if (goldItems.find(itemID) != goldItems.end())
+                {
+                    FunctionParameterIndexId = 60;
+                    red = 1.0f;
+                    green = 0.843f;
+                    blue = 0.0f;
+                }
+                // Purple Items
+                else if (purpleItems.find(itemID) != purpleItems.end())
+                {
+                    FunctionParameterIndexId = 61;
+                    red = 0.8f;
+                    green = 0.0f;
+                    blue = 0.8f;
+                }
+                // Blue Items
+                else if (blueItems.find(itemID) != blueItems.end())
+                {
+                    FunctionParameterIndexId = 62;
+                    red = 0.0f;
+                    green = 0.50196f;
+                    blue = 1.0f;
+                }
+                // Gray Items
+                else if (grayItems.find(itemID) != grayItems.end())
+                {
+                    FunctionParameterIndexId = 63;
+                    red = 0.50196f;
+                    green = 0.50196f;
+                    blue = 0.50196f;
+                }
+                
+                highlightClass.SetHighlightCurrentContext(process, itemEntity, ContextID);
+                highlightClass.SetHighlightVisibilityType(process, itemEntity, 2);
 
-                //highlightClass.SetHighlightDistance(process, itemEntity, 3149.6f);  // 60 meters divided by 0.01905 distance factor
+                highlightClass.SetHighlightActiveState(process, itemEntity, ContextID, FunctionParameterIndexId);
+                highlightClass.SetHighlightFunctions(process, itemEntity, FunctionParameterIndexId, 137, 125, 1.5f, true, 0, false);
+                
+                // set color
+                Color color = { red, green, blue };
+                highlightClass.SetHighlightParameter(process, itemEntity, FunctionParameterIndexId, &color.r);
+
+                highlightClass.SetHighlightDistance(process, itemEntity, 3149.6f);          // 60 meters divided by 0.01905
             }
         }
     }
 }
-
-
-// Those are 2 default values for glow. 1363184265 is the default value for red items with glow when you are playing Loba. 1411417991 is the default value for white items with no glow.
-// For reference:
-// White default: 1411417991
-// Blue default: 1428195207
-// Purple default: 1444972423 // 1396738697 glow
-// Gold default: 1461749639 // 1379961481 glow
-// Red default: 1478526855 // 1363184265 glow
-// Weapons default: 1358917120
-
-// I tried changing them to non-default values and it seems that they represent the thickness of the glow around the item.
-// I scan through 10.000 entities and I check if an itemEntity is an item by looking at glow values.
 

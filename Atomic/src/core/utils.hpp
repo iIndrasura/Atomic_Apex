@@ -8,4 +8,8 @@ void clearScreen() {
     printf("\e[H\e[2J\e[3J");
 }
 
+void cleanBetween() {
+    printf("\e[J");
+}
+
 #endif

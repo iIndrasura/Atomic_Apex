@@ -47,6 +47,11 @@ void TriggerBot::ApplyTriggerBot(rx_handle process, QWORD ClientEntityList, QWOR
         {
             QWORD pEntity = playerClass.GetClientEntity(process, ClientEntityList, p);
 
+            // is Entity valid
+            if (pEntity == 0) {
+                continue;
+            }
+
             // Team Number check
             int entTeam = playerClass.getPlayerTeamNum( process,  pEntity);
             int locTeam = localplayerClass.getLocalTeamNumber(process);

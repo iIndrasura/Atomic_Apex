@@ -19,6 +19,7 @@
 #include <malloc.h>
 #include <iomanip>
 #include <random>
+#include <unordered_set>
 
 //#include <stdint.h>
 //#include <X11/Xlib.h>

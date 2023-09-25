@@ -20,9 +20,9 @@ add_executable ( ${OUT}
     src/features/aimbot.cpp
     src/features/rcs.cpp
     src/features/chams.cpp
-    src/features/spec.cpp
     src/features/skin_changer.cpp
     src/features/auto_grapple.cpp
+    src/features/spec.cpp
     src/features/radar.cpp
     src/features/item_esp.cpp
     src/features/triggerbot.cpp

@@ -159,150 +159,154 @@ newConfigFile << "Evac_Tower(26)=0" << std::endl;
 
 switch (itemID)
 				{
-					// Weapons
-					case 1:   // Kraber
-					case 2:   // Mastiff
-					case 8:   // L-Star
-					case 13:  // Havoc
-					case 18:  // Devotion
-					case 23:  // Triple Take
-					case 28:  // Flatline
-					case 33:  // Hemlok
-					case 39:  // G7 Scout
-					case 44:  // Alternator
-					case 49:  // R-99
-					case 55:  // Prowler
-					case 60:  // Volt
-					case 65:  // Longbow
-					case 69:  // Charge Rifle
-					case 75:  // Spitfire
-					case 80:  // R-301
-					case 85:  // EVA-8 Auto
-					case 90:  // Peacekeeper
-					case 95:  // Mozambique
-					case 105: // Wingman
-					case 110: // P2020
-					case 115: // RE-45
-					case 121: // Sentinel
-					case 126: // Bocek Bow
-					case 128: // 30-30 Repeater
-					case 134: // Nemesis
-					case 145: // Rampage
-					case 150: // Car
+// Weapons
+case 1:   // Kraber
+case 2:   // Mastiff
+case 8:   // L-Star
+case 13:  // Havoc
+case 18:  // Devotion
+case 23:  // Triple Take
+case 28:  // Flatline
+case 33:  // Hemlok
+case 39:  // G7 Scout
+case 44:  // Alternator
+case 49:  // R-99
+case 55:  // Prowler
+case 60:  // Volt
+case 65:  // Longbow
+case 69:  // Charge Rifle
+case 75:  // Spitfire
+case 80:  // R-301
+case 85:  // EVA-8 Auto
+case 90:  // Peacekeeper
+case 95:  // Mozambique
+case 105: // Wingman
+case 110: // P2020
+case 115: // RE-45
+case 121: // Sentinel
+case 126: // Bocek Bow
+case 128: // 30-30 Repeater
+case 134: // Nemesis
+case 145: // Rampage
+case 150: // Car
 
-					// Ammo
-					case 139: // Light Rounds
-					case 140: // Energy Ammo
-					case 141: // Shotgun Shells
-					case 142: // Heavy Rounds
-					case 143: // Sniper Rounds
+// Ammo
+case 139: // Light Rounds
+case 140: // Energy Ammo
+case 141: // Shotgun Shells
+case 142: // Heavy Rounds
+case 143: // Sniper Rounds
 
-					// Consumables
-					case 181: // Ultimate Accelerant
-					case 182: // Phoenix Kit
-					case 183: // Med Kit
-					case 184: // Syringe
-					case 185: // Shield Battery
-					case 186: // Shield Cell
+// Consumables
+case 181: // Ultimate Accelerant
+case 182: // Phoenix Kit
+case 183: // Med Kit
+case 184: // Syringe
+case 185: // Shield Battery
+case 186: // Shield Cell
 
-					// Helmets
-					case 187: // Helmet Level 1
-					case 188: // Helmet Level 2
-					case 189: // Helmet Level 3
-					case 190: // Helmet Level 4
+// Helmets
+case 187: // Helmet Level 1
+case 188: // Helmet Level 2
+case 189: // Helmet Level 3
+case 190: // Helmet Level 4
 
-					// Armor
-					case 192: // Body Armor Level 1
-					case 193: // Body Armor Level 2
-					case 194: // Body Armor Level 3
-					case 195: // Body Armor Level 4
+// Armor
+case 192: // Body Armor Level 1
+case 193: // Body Armor Level 2
+case 194: // Body Armor Level 3
+case 195: // Body Armor Level 4
 
-					// Evo Shields
-					case 197: // Evo Shield 1
-					case 198: // Evo Shield 2
-					case 199: // Evo Shield 3
-					case 200: // Evo Shield 4
+// Evo Shields
+case 197: // Evo Shield 1
+case 198: // Evo Shield 2
+case 199: // Evo Shield 3
+case 200: // Evo Shield 4
 
-					// Knockdown Shields
-					case 202: // Knockdown Shield Level 1
-					case 203: // Knockdown Shield Level 2
-					case 204: // Knockdown Shield Level 3
-					case 205: // Knockdown Shield Level 4
+// Knockdown Shields
+case 202: // Knockdown Shield Level 1
+case 203: // Knockdown Shield Level 2
+case 204: // Knockdown Shield Level 3
+case 205: // Knockdown Shield Level 4
 
-					// Backpacks
-					case 206: // Backpack Level 1
-					case 207: // Backpack Level 2
-					case 208: // Backpack Level 3
-					case 209: // Backpack Level 4
+// Backpacks
+case 206: // Backpack Level 1
+case 207: // Backpack Level 2
+case 208: // Backpack Level 3
+case 209: // Knockdown Shield Level 4
 
-					// Grenades
-					case 211: // Thermite Grenade
-					case 212: // Frag Grenade
-					case 213: // Arc Star
+// Grenades
+case 211: // Thermite Grenade
+case 212: // Frag Grenade
+case 213: // Arc Star
 
-					// Scopes
-					case 214: // 1x HCOG (Classic)
-					case 215: // 2x HCOG (Bruiser)
-					case 216: // 1x Holo
-					case 217: // 1x-2x Variable Holo
-					case 218: // 1x Digital Threat
-					case 219: // 3x HCOG (Ranger)
-					case 220: // 2x-4x Variable AOG
-					case 221: // 6x Sniper
-					case 222: // 4x-8x Variable Sniper
-					case 223: // 4x-10x Digital Sniper Threat
+// Scopes
+case 214: // 1x HCOG (Classic)
+case 215: // 2x HCOG (Bruiser)
+case 216: // 1x Holo
+case 217: // 1x-2x Variable Holo
+case 218: // 1x Digital Threat
+case 219: // 3x HCOG (Ranger)
+case 220: // 2x-4x Variable AOG
+case 221: // 6x Sniper
+case 222: // 4x-8x Variable Sniper
+case 223: // 4x-10x Digital Sniper Threat
 
-					// Barrel Stabilizers
-					case 224: // Barrel Stabilizer Level 1
-					case 225: // Barrel Stabilizer Level 2
-					case 226: // Barrel Stabilizer Level 3
+// Barrel Stabilizers
+case 224: // Barrel Stabilizer Level 1
+case 225: // Barrel Stabilizer Level 2
+case 226: // Barrel Stabilizer Level 3
 
-					// Laser Sights
-					case 228: // Laser Sight Level 1
-					case 229: // Laser Sight Level 2
-					case 230: // Laser Sight Level 3
+// Laser Sights
+case 228: // Laser Sight Level 1
+case 229: // Laser Sight Level 2
+case 230: // Laser Sight Level 3
 
-					// Magazines
-					case 231: // Light Magazine Level 1
-					case 232: // Light Magazine Level 2
-					case 233: // Light Magazine Level 3
-					case 234: // Light Magazine Level 4
-					case 235: // Heavy Magazine Level 1
-					case 236: // Heavy Magazine Level 2
-					case 237: // Heavy Magazine Level 3
-					case 238: // Heavy Magazine Level 4
-					case 239: // Energy Magazine Level 1
-					case 240: // Energy Magazine Level 2
-					case 241: // Energy Magazine Level 3
-					case 242: // Energy Magazine Level 4
-					case 243: // Sniper Magazine Level 1
-					case 244: // Sniper Magazine Level 2
-					case 245: // Sniper Magazine Level 3
-					case 246: // Sniper Magazine Level 4
-					case 247: // Shotgun Bolt Level 1
-					case 248: // Shotgun Bolt Level 2
-					case 249: // Shotgun Bolt Level 3
-					case 250: // Shotgun Bolt Level 4
+// Magazines
+case 231: // Light Magazine Level 1
+case 232: // Light Magazine Level 2
+case 233: // Light Magazine Level 3
+case 234: // Light Magazine Level 4
 
-					// Stocks
-					case 251: // Standard Stock Level 1
-					case 252: // Standard Stock Level 2
-					case 253: // Standard Stock Level 3
-					case 254: // Sniper Stock Level 1
-					case 255: // Sniper Stock Level 2
-					case 256: // Sniper Stock Level 3
+case 235: // Heavy Magazine Level 1
+case 236: // Heavy Magazine Level 2
+case 237: // Heavy Magazine Level 3
+case 238: // Heavy Magazine Level 4
 
-					// Attachments
-					//case 1:   // Turbocharger
-					case 5:   // Hammerpoint Rounds
-					case 4:   // Disruptor Rounds
-					case 15:  // Boost Loader
+case 239: // Energy Magazine Level 1
+case 240: // Energy Magazine Level 2
+case 241: // Energy Magazine Level 3
+case 242: // Energy Magazine Level 4
 
-					// Special Items
-					case 273: // Treasure Pack
-					case 25:  // Vault Key
-					case 22:  // Heat Shield
-					//case 23:  // Respawn Beacon
-					case 26:  // Evac Tower
-					break;
+case 243: // Sniper Magazine Level 1
+case 244: // Sniper Magazine Level 2
+case 245: // Sniper Magazine Level 3
+case 246: // Sniper Magazine Level 4
+
+case 247: // Shotgun Bolt Level 1
+case 248: // Shotgun Bolt Level 2
+case 249: // Shotgun Bolt Level 3
+case 250: // Shotgun Bolt Level 4
+
+// Stocks
+case 251: // Standard Stock Level 1
+case 252: // Standard Stock Level 2
+case 253: // Standard Stock Level 3
+case 254: // Sniper Stock Level 1
+case 255: // Sniper Stock Level 2
+case 256: // Sniper Stock Level 3
+
+// Attachments
+//case 1:   // Turbocharger
+case 5:   // Hammerpoint Rounds
+case 4:   // Disruptor Rounds
+case 15:  // Boost Loader
+
+// Special Items
+case 273: // Treasure Pack
+case 25:  // Vault Key
+case 22:  // Heat Shield
+//case 23:  // Respawn Beacon
+case 26:  // Evac Tower
+break;
 				}

@@ -29,9 +29,12 @@ private:
     Weapon weaponClass;
     //Glow glow;
 
-    float fovAds;
-    float fovHipfire;
-    float fovdeadzone;
+    float maxfov_Ads;
+    float minfov_Ads;
+    float fov_Hipfire;
+    float fov_deadzone;
+
+    float MaxDistance;
 
     DWORD previous_tick;
     QWORD target_entity_;

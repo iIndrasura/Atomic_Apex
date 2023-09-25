@@ -72,6 +72,7 @@ void Menu::displayConfigValues() {
     std::cout << FG_BLUE << "GLOW_HEALTH\t\t" << RESET << (ConfigValues::GLOW_HEALTH ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
     std::cout << FG_BLUE << "ITEM_ESP\t\t" << RESET << (ConfigValues::ITEM_ESP ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
     std::cout << FG_BLUE << "LOBA_ESP\t\t" << RESET << (ConfigValues::LOBA_ESP ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
+    std::cout << FG_BLUE << "LOBA_ESP2\t\t" << RESET << (ConfigValues::LOBA_ESP2 ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
     std::cout << FG_BLUE << "WEAPON_CHAMS\t\t" << RESET << (ConfigValues::WEAPON_CHAMS ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
     std::cout << FG_BLUE << "ARMS_CHAMS\t\t" << RESET << (ConfigValues::ARMS_CHAMS ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;
     std::cout << FG_BLUE << "SKIN_CHANGER\t\t" << RESET << (ConfigValues::SKIN_CHANGER ? FG_YELLOW "Enable" : FG_YELLOW "Disable") << RESET << std::endl;

@@ -210,10 +210,10 @@ void Glow::ActivateGlow(rx_handle process, QWORD ClientEntityList, QWORD Sensiti
                 //Initialize R, G, and B with default values
                 float R, G, B;
                 //float GlowDistance;
-                uint32_t FunctionParameterIndexId;
+                //uint32_t FunctionParameterIndexId;
 
                 // Glow Settings
-                uint32_t ContextID = 1;
+                ContextID = 1;
                 highlightClass.SetHighlightCurrentContext(process, entity, ContextID);      // Glow set context ID aka Enable
                 highlightClass.SetHighlightVisibilityType(process, entity, 2);              // Glow Vis Type aka Through Walls
 
@@ -232,10 +232,12 @@ void Glow::ActivateGlow(rx_handle process, QWORD ClientEntityList, QWORD Sensiti
                         {
                             // if not visible, if they have been visible 20 loops ago
                             if (loopsSinceLastVisible[i] < 10) {
-                                loopsSinceLastVisible[i]++; 
+                                loopsSinceLastVisible[i]++;
                             } 
                             else 
                             {
+                                //aimbot.SetTargetEntity(0);
+
                                 FunctionParameterIndexId = 65;
                                 highlightClass.SetHighlightActiveState(process, entity, ContextID, FunctionParameterIndexId);
                                 highlightClass.SetHighlightFunctions(process, entity, FunctionParameterIndexId, 137, 138, 1.5f, true, 0, false);    // 101, 125
@@ -257,7 +259,7 @@ void Glow::ActivateGlow(rx_handle process, QWORD ClientEntityList, QWORD Sensiti
                         {
                             loopsSinceLastVisible[i] = 0; //only if truely visible
 
-                            if (fov < target_fov && entNewVisTime > lastvis_aim[i])
+                            if ((fov < target_fov) && (entNewVisTime > lastvis_aim[i]) && (entNewVisTime != 0.00f))
                             {
                                 target_fov = fov;
                                 target_entity = entity;

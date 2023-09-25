@@ -26,6 +26,10 @@ int SpectatorCount::UpdateSpectatorCount(rx_handle process, QWORD ClientEntityLi
         {
             QWORD player = playerClass.GetClientEntity(process, ClientEntityList, j);
 
+            if (player == 0) {
+                continue;
+            }
+            
             float targetAngle = playerClass.getplayerSpecYaw(process, player);
 
             float targetYaw = -targetAngle; // yaw is inverted
