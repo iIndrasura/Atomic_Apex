@@ -61,7 +61,7 @@ void Chams::ApplyChamsToViewModel(rx_handle process, uintptr_t viewModelPtr, flo
     highlightClass.SetHighlightCurrentContext(process, viewModelPtr, ContextID);      // Glow set context ID aka Enable
     highlightClass.SetHighlightVisibilityType(process, viewModelPtr, 2); 
 
-    uint32_t FunctionParameterIndexId = 64;
+    uint32_t FunctionParameterIndexId = 66;
     highlightClass.SetHighlightActiveState(process, viewModelPtr, ContextID, FunctionParameterIndexId);
     highlightClass.SetHighlightFunctions(process, viewModelPtr, FunctionParameterIndexId, 0, 125, ConfigValues::CHAM_BORDER, true, 0, false);
 

@@ -29,15 +29,8 @@ private:
     Weapon weaponClass;
     //Glow glow;
 
-    float maxfov_Ads;
-    float minfov_Ads;
-    float fov_Hipfire;
-    float fov_deadzone;
-
-    float MaxDistance;
-
     DWORD previous_tick;
-    QWORD target_entity_;
+    QWORD target_entity_ = 0;
 
     MouseMovementData mouseData;
 
@@ -55,9 +48,9 @@ public:
     // Declare a setter method to set the target_entity
     //void SetTargetEntity(QWORD target_entity);
 
-    void SetTargetEntity(QWORD entity) {
-        target_entity_ = entity;
-    }
+    void SetTargetEntity(QWORD entity);
+
+    QWORD GetTargetEntity() const;
 
     bool shouldAimbotEnable(rx_handle process, QWORD InputSystem);
     void ActivateAimbot(rx_handle process, QWORD InputSystem, QWORD ClientEntityList, QWORD Sensitivity, int PlayerData, int bZooming);

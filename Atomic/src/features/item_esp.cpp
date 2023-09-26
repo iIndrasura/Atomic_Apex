@@ -42,7 +42,7 @@ void ItemESP::ApplyItemESP(rx_handle process, QWORD ClientEntityList)
             // Apply ITEM_ESP settings only if ITEM_ESP is enabled and itemID is in ITEM_ESP_IDS
             if (ConfigValues::ITEM_ESP == 1 && (itemEspIds.find(itemID) != itemEspIds.end()))
             {
-                FunctionParameterIndexId = 58;
+                FunctionParameterIndexId = 60;
                 red = ConfigValues::ITEM_RED_VALUE;
                 green = ConfigValues::ITEM_GREEN_VALUE;
                 blue = ConfigValues::ITEM_BLUE_VALUE;
@@ -57,7 +57,7 @@ void ItemESP::ApplyItemESP(rx_handle process, QWORD ClientEntityList)
                 Color color = { red, green, blue };
                 highlightClass.SetHighlightParameter(process, itemEntity, FunctionParameterIndexId, &color.r);
 
-                highlightClass.SetHighlightDistance(process, itemEntity, 3149.6f);          // 60 meters divided by 0.01905
+                highlightClass.SetHighlightDistance(process, itemEntity, 2624.68f);          // 50 meters divided by 0.01905
             }
 
             // Apply LOBA_ESP settings only if LOBA_ESP is enabled and itemID is in LOBA_ESP_IDS
@@ -71,7 +71,7 @@ void ItemESP::ApplyItemESP(rx_handle process, QWORD ClientEntityList)
                 // Epic Items
                 if (redItems.find(itemID) != redItems.end()) 
                 {
-                    FunctionParameterIndexId = 59;
+                    FunctionParameterIndexId = 61;
                     red = 0.8f;
                     green = 0.0f;
                     blue = 0.0f;
@@ -79,7 +79,7 @@ void ItemESP::ApplyItemESP(rx_handle process, QWORD ClientEntityList)
                 // Gold Items
                 else if (goldItems.find(itemID) != goldItems.end())
                 {
-                    FunctionParameterIndexId = 60;
+                    FunctionParameterIndexId = 62;
                     red = 1.0f;
                     green = 0.843f;
                     blue = 0.0f;
@@ -87,7 +87,7 @@ void ItemESP::ApplyItemESP(rx_handle process, QWORD ClientEntityList)
                 // Purple Items
                 else if (purpleItems.find(itemID) != purpleItems.end())
                 {
-                    FunctionParameterIndexId = 61;
+                    FunctionParameterIndexId = 63;
                     red = 0.8f;
                     green = 0.0f;
                     blue = 0.8f;
@@ -95,7 +95,7 @@ void ItemESP::ApplyItemESP(rx_handle process, QWORD ClientEntityList)
                 // Blue Items
                 else if (blueItems.find(itemID) != blueItems.end())
                 {
-                    FunctionParameterIndexId = 62;
+                    FunctionParameterIndexId = 64;
                     red = 0.0f;
                     green = 0.50196f;
                     blue = 1.0f;
@@ -103,7 +103,7 @@ void ItemESP::ApplyItemESP(rx_handle process, QWORD ClientEntityList)
                 // Gray Items
                 else if (grayItems.find(itemID) != grayItems.end())
                 {
-                    FunctionParameterIndexId = 63;
+                    FunctionParameterIndexId = 65;
                     red = 0.50196f;
                     green = 0.50196f;
                     blue = 0.50196f;
@@ -119,7 +119,7 @@ void ItemESP::ApplyItemESP(rx_handle process, QWORD ClientEntityList)
                 Color color = { red, green, blue };
                 highlightClass.SetHighlightParameter(process, itemEntity, FunctionParameterIndexId, &color.r);
 
-                highlightClass.SetHighlightDistance(process, itemEntity, 3149.6f);          // 60 meters divided by 0.01905
+                highlightClass.SetHighlightDistance(process, itemEntity, 2624.68f);          // 50 meters divided by 0.01905
             }
         }
     }

@@ -1,21 +1,24 @@
 #include "aimbot.hpp"
 
-Aimbot::Aimbot() : target_entity_(0), previous_tick(0) {
+Aimbot::Aimbot() /*:  target_entity_(0),  previous_tick(0) */{
     // Initialize member variables
-    maxfov_Ads = ConfigValues::AIMFOV_ADS_MAX;
-    minfov_Ads = ConfigValues::AIMFOV_ADS_MIN;
-    fov_Hipfire = ConfigValues::AIMFOV_HIPFIRE;
-    fov_deadzone = ConfigValues::AIMFOV_DEADZONE;
-    MaxDistance = ConfigValues::AIMBOT_MAXDISTANCE;
 }
 
 Aimbot::~Aimbot() {
     // Destructor implementation
 }
 
+void Aimbot::SetTargetEntity(QWORD entity) {
+        target_entity_ = entity;
+}
+
+QWORD Aimbot::GetTargetEntity() const {
+    return target_entity_;
+}
+
 // Bool to enable aim
 bool Aimbot::shouldAimbotEnable(rx_handle process, QWORD InputSystem) {
-    if((IsButtonDown(process, InputSystem, ConfigValues::AIMKEY) || IsButtonDown(process, InputSystem, ConfigValues::AIMKEY2)) && ConfigValues::AIMBOT_ENABLED == 1) {
+    if( ConfigValues::AIMBOT_ENABLED == 1 && (IsButtonDown(process, InputSystem, ConfigValues::AIMKEY) || IsButtonDown(process, InputSystem, ConfigValues::AIMKEY2)) ) {
 
         return true;
     }
@@ -48,10 +51,11 @@ void Aimbot::ActivateAimbot(rx_handle process, QWORD InputSystem, QWORD ClientEn
     vec3 muzzle;
     rx_read_process(process, localplayer + OFFSETS::m_muzzle, &muzzle, sizeof(vec3)); //CPlayer!camera_origin
 
-    QWORD target_entity = target_entity_;
+    //QWORD target_entity = target_entity_;
+    QWORD target_entity = GetTargetEntity();
 
     vec3 local_position;
-    rx_read_process(process, localplayer + OFFSETS::m_vecAbsOrigin, &local_position, sizeof(vec3));
+    rx_read_process(process, localplayer + OFFSETS::m_vecAbsOrigin, &local_position, sizeof(vec3));     // local Player Position
 
     if (target_entity && shouldAimbotEnable(process, InputSystem))
     {
@@ -60,40 +64,29 @@ void Aimbot::ActivateAimbot(rx_handle process, QWORD InputSystem, QWORD ClientEn
         if ((playerClass.getBleedState(process, target_entity)) > 0) // ignore knock
             return;
 
-
         vec3 enmPos;
-
-        rx_read_process(process, localplayer + OFFSETS::m_vecAbsOrigin, &local_position, sizeof(vec3)); // local Player Position
         rx_read_process(process, target_entity + OFFSETS::m_vecAbsOrigin, &enmPos, sizeof(vec3)); // enemy position
-
-
-        //enmPos.x = 31518;
-        //enmPos.y = -6712;
-        //enmPos.z = -29235;
-
 
         float distance = ((CalcDistance(local_position, enmPos) / 100) * 2);   // need to verify
         //printf("  	distance %f", ((CalcDistance(local_position, enmPos))/100)*2);
-        bool far = (distance >= MaxDistance);
+        bool far = (distance >= ConfigValues::AIMBOT_MAXDISTANCE);
 
-        if (far)
-        {
+        if (far) {
             //printf(" Cancelling ");
             return;
         }
 
         /* --------------------- DYNAMIC FOV -----------------------*/
         // Calculate the scaling factor based on distance
-        float distanceFactor = std::min(1.0f, std::max(0.0f, 1.0f - (distance / MaxDistance)));
+        float distanceFactor = std::min(1.0f, std::max(0.0f, 1.0f - (distance / ConfigValues::AIMBOT_MAXDISTANCE)));
+        
         // Calculate the scaled fovdeadzone
-        float scaledFovDeadzone = fov_deadzone * distanceFactor;
-
+        float scaledFovDeadzone = ConfigValues::AIMFOV_DEADZONE * distanceFactor;
         // Calculate the scaled fovAds within the range of minfovAds and maxfovAds
-        float scaledFovAds = minfov_Ads + distanceFactor * (maxfov_Ads - minfov_Ads);
+        float scaledFovAds = ConfigValues::AIMFOV_ADS_MIN + distanceFactor * (ConfigValues::AIMFOV_ADS_MAX - ConfigValues::AIMFOV_ADS_MIN);
 
         //printf(" Continue ");
 
-        // prediction
         vec3 target_angle = {0, 0, 0};
         float fov = 360.0f;
 
@@ -134,6 +127,7 @@ void Aimbot::ActivateAimbot(rx_handle process, QWORD InputSystem, QWORD ClientEn
 
         //DWORD weapon_id = rx_read_i32(process, localplayer + m_iWeapon) & 0xFFFF;
         //QWORD weapon = playerClass.GetClientEntity(process, IClientEntityList, weapon_id - 1);
+        
         float zoom_fov = rx_read_float(process, weapon + PlayerData + 0xb8);
 
         if (rx_read_i8(process, localplayer + bZooming))
@@ -141,9 +135,8 @@ void Aimbot::ActivateAimbot(rx_handle process, QWORD InputSystem, QWORD ClientEn
             fl_sensitivity = (zoom_fov / 90.0f) * fl_sensitivity;
             fovAds = scaledFovAds;
         }else{
-            fovAds = fov_Hipfire;
+            fovAds = ConfigValues::AIMFOV_HIPFIRE;
         }
-
 
         if (fov <= fovAds)
         {

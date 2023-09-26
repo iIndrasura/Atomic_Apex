@@ -1,10 +1,13 @@
 #include "glow.hpp"
 #include "aimbot.hpp"
 
-Glow::Glow(Aimbot& aimbotRef) : iTeamControl(0), iLocControl(0), target_entity(0), aimbot(aimbotRef) {
+Glow::Glow(Aimbot& aimbotRef) : iTeamControl(0), iLocControl(0), /* target_entity(0), */ aimbot(aimbotRef) {
     memset(lastvis_aim, 0, sizeof(lastvis_aim));
     memset(entityVisibilityData, 0, sizeof(entityVisibilityData));
     memset(loopsSinceLastVisible, 0, sizeof(loopsSinceLastVisible));
+
+    //FOV_ADS = ConfigValues::AIMFOV_ADS_MAX;
+    //FOV_HipFire = ConfigValues::AIMFOV_HIPFIRE;
 
     // Constructor implementation
 }
@@ -201,6 +204,9 @@ void Glow::ActivateGlow(rx_handle process, QWORD ClientEntityList, QWORD Sensiti
                 vec3 breath_angles;
                 rx_read_process(process, localplayer + OFFSETS::m_iViewAngles - 0x10, &breath_angles, sizeof(vec3));
 
+                // Local Player Field of View for aimbot
+                float fov = get_fov(breath_angles, target_angle);
+
                 // Last Visible time
                 float entNewVisTime = playerClass.getLastVisibleTime(process, entity);
 
@@ -210,122 +216,158 @@ void Glow::ActivateGlow(rx_handle process, QWORD ClientEntityList, QWORD Sensiti
                 //Initialize R, G, and B with default values
                 float R, G, B;
                 //float GlowDistance;
-                //uint32_t FunctionParameterIndexId;
+                uint32_t FunctionParameterIndexId;
 
                 // Glow Settings
-                ContextID = 1;
+                uint32_t ContextID = 1;
                 highlightClass.SetHighlightCurrentContext(process, entity, ContextID);      // Glow set context ID aka Enable
                 highlightClass.SetHighlightVisibilityType(process, entity, 2);              // Glow Vis Type aka Through Walls
 
                 // Current entity Last Visible check
                 bool Visible = IsEntityVisible(process, entity, entityVisibilityData[i]);
 
-                // Local Player Field of View for aimbot
-                float fov = get_fov(breath_angles, target_angle);
-
                 // Entity not knocked
                 if (entKnockedState == 0)
                 {
-                    if (ConfigValues::GLOW_ENEMY == 1 && ConfigValues::GLOW_HEALTH == 0)
+                    if (!Visible) 
                     {
-                        if (!Visible) 
+                        // if not visible, if they have been visible 20 loops ago
+                        if (loopsSinceLastVisible[i] < 10) 
                         {
-                            // if not visible, if they have been visible 20 loops ago
-                            if (loopsSinceLastVisible[i] < 10) {
-                                loopsSinceLastVisible[i]++;
-                            } 
-                            else 
-                            {
-                                //aimbot.SetTargetEntity(0);
-
-                                FunctionParameterIndexId = 65;
-                                highlightClass.SetHighlightActiveState(process, entity, ContextID, FunctionParameterIndexId);
-                                highlightClass.SetHighlightFunctions(process, entity, FunctionParameterIndexId, 137, 138, 1.5f, true, 0, false);    // 101, 125
-                                
-                                // set color    { 1.0f, 0.0f, 0.0f }
-                                Color color = { 
-                                    ConfigValues::INVISIBLE_RED_VALUE, 
-                                    ConfigValues::INVISIBLE_GREEN_VALUE, 
-                                    ConfigValues::INVISIBLE_BLUE_VALUE
-                                };
-                                highlightClass.SetHighlightParameter(process, entity, FunctionParameterIndexId, &color.r);
-
-                                highlightClass.SetHighlightDistance(process, entity, ConfigValues::GLOW_DISTANCE);     // GlowDistance
-
-                                continue;
-                            }
+                            loopsSinceLastVisible[i]++;
                         } 
-                        else if (Visible) 
+                        else 
                         {
-                            loopsSinceLastVisible[i] = 0; //only if truely visible
+                            target_entity = 0;
 
-                            if ((fov < target_fov) && (entNewVisTime > lastvis_aim[i]) && (entNewVisTime != 0.00f))
+                            if (ConfigValues::GLOW_ENEMY == 1 && ConfigValues::GLOW_HEALTH == 0)
                             {
-                                target_fov = fov;
-                                target_entity = entity;
-                                lastvis_aim[i] = entNewVisTime;
-                                // Pass the valid target_entity to the aimbot
-                                aimbot.SetTargetEntity(entity);
+                                FunctionParameterIndexId = 69;
+                                R = ConfigValues::INVISIBLE_RED_VALUE;
+                                G = ConfigValues::INVISIBLE_GREEN_VALUE;
+                                B = ConfigValues::INVISIBLE_BLUE_VALUE;
+
+                                //GlowDistance = ConfigValues::GLOW_DISTANCE;
+                            }
+                            else if (ConfigValues::GLOW_HEALTH == 1)
+                            {
+                                if (shield > 100)
+                                {
+                                    FunctionParameterIndexId = 70;
+                                    R = 0.725f;
+                                    G = 0.0f;
+                                    B = 0.0f;
+                                    // Dark Red
+                                }
+                                else if (shield <= 100 && shield > 75 )
+                                {
+                                    FunctionParameterIndexId = 71;
+                                    R = 0.5f;
+                                    G = 0.0f;
+                                    B = 0.5f;
+                                    // dark Purple
+                                }
+                                else if (shield <= 75 && shield > 50)
+                                {
+                                    FunctionParameterIndexId = 72;
+                                    R = 0.2f;
+                                    G = 0.2f;
+                                    B = 1.0f;
+                                    // dark Blue
+                                }
+                                else if (shield <= 50 && shield > 0)
+                                {
+                                    FunctionParameterIndexId = 73;
+                                    R = 0.0f;
+                                    G = 0.6f;
+                                    B = 0.298f;
+                                    // dark light green
+                                }
+                                else
+                                {
+                                    FunctionParameterIndexId = 74;
+                                    R = 0.0f;
+                                    G = 1.0f;
+                                    B = 0.0f;
+                                    // Green
+                                }
+
+                                //GlowDistance = 3938.0f;  // 75 meters divided by 0.01905f
                             }
                             
-                            FunctionParameterIndexId = 66;
                             highlightClass.SetHighlightActiveState(process, entity, ContextID, FunctionParameterIndexId);
-                            highlightClass.SetHighlightFunctions(process, entity, FunctionParameterIndexId, 137, 125, 1.5f, true, 0, false);    // 101, 125
+                            highlightClass.SetHighlightFunctions(process, entity, FunctionParameterIndexId, 137, 138, 1.5f, true, 0, false);    // 101, 125
                             
                             // set color    { 1.0f, 0.0f, 0.0f }
-                            Color color = { 
-                                ConfigValues::VISIBLE_RED_VALUE, 
-                                ConfigValues::VISIBLE_GREEN_VALUE, 
-                                ConfigValues::VISIBLE_BLUE_VALUE
-                            };
+                            Color color = { R, G, B};
                             highlightClass.SetHighlightParameter(process, entity, FunctionParameterIndexId, &color.r);
 
                             highlightClass.SetHighlightDistance(process, entity, ConfigValues::GLOW_DISTANCE);     // GlowDistance
-                        }
-                    }
-                    else if (ConfigValues::GLOW_HEALTH == 1)
-                    {
-                        if (shield > 100)
-                        {
-                            FunctionParameterIndexId = 67;
-                            R = 1.0f;
-                            G = 0.0f;
-                            B = 0.0f;
-                            // Red
-                        }
-                        else if (shield <= 100 && shield > 75 )
-                        {
-                            FunctionParameterIndexId = 68;
-                            R = 1.0f;
-                            G = 0.0f;
-                            B = 1.0f;
-                            // Purple
-                        }
-                        else if (shield <= 75 && shield > 50)
-                        {
-                            FunctionParameterIndexId = 69;
-                            R = 0.0f;
-                            G = 0.5f;
-                            B = 1.0f;
-                            // Blue
-                        }
-                        else if (shield <= 50 && shield > 0)
-                        {
-                            FunctionParameterIndexId = 70;
-                            R = 0.0f;
-                            G = 1.0f;
-                            B = 0.5f;
-                            // light green
-                        }
-                        else
-                        {
-                            FunctionParameterIndexId = 71;
-                            R = 0.0f;
-                            G = 1.0f;
-                            B = 0.0f;
-                            // Green
-                        }
 
+                            continue;
+                        }
+                    } 
+                    else if (Visible) 
+                    {
+                        loopsSinceLastVisible[i] = 0; //only if truely visible
+
+                        /*if ((fov < target_fov)  && (fov <= FOV_ADS || fov <= FOV_HipFire)  && (entNewVisTime > lastvis_aim[i]) )*/
+                        
+                        target_fov = fov;
+                        target_entity = entity;
+                        lastvis_aim[i] = entNewVisTime;
+                        
+                        if (ConfigValues::GLOW_ENEMY == 1 && ConfigValues::GLOW_HEALTH == 0) 
+                        {
+                            FunctionParameterIndexId = 75;
+                            R = ConfigValues::VISIBLE_RED_VALUE;
+                            G = ConfigValues::VISIBLE_GREEN_VALUE;
+                            B = ConfigValues::VISIBLE_BLUE_VALUE;
+                        }
+                        else if (ConfigValues::GLOW_HEALTH == 1)
+                        {
+                            if (shield > 100)
+                            {
+                                FunctionParameterIndexId = 76;
+                                R = 1.0f;
+                                G = 0.0f;
+                                B = 0.0f;
+                                // Red
+                            }
+                            else if (shield <= 100 && shield > 75 )
+                            {
+                                FunctionParameterIndexId = 77;
+                                R = 1.0f;
+                                G = 0.0f;
+                                B = 1.0f;
+                                // Purple
+                            }
+                            else if (shield <= 75 && shield > 50)
+                            {
+                                FunctionParameterIndexId = 78;
+                                R = 0.0f;
+                                G = 0.5f;
+                                B = 1.0f;
+                                // Blue
+                            }
+                            else if (shield <= 50 && shield > 0)
+                            {
+                                FunctionParameterIndexId = 79;
+                                R = 0.0f;
+                                G = 1.0f;
+                                B = 0.5f;
+                                // light green
+                            }
+                            else
+                            {
+                                FunctionParameterIndexId = 80;
+                                R = 0.0f;
+                                G = 1.0f;
+                                B = 0.0f;
+                                // Green
+                            }
+                        }
+                        
                         highlightClass.SetHighlightActiveState(process, entity, ContextID, FunctionParameterIndexId);
                         highlightClass.SetHighlightFunctions(process, entity, FunctionParameterIndexId, 137, 125, 1.5f, true, 0, false);
                         
@@ -333,13 +375,15 @@ void Glow::ActivateGlow(rx_handle process, QWORD ClientEntityList, QWORD Sensiti
                         Color color = { R, G, B };
                         highlightClass.SetHighlightParameter(process, entity, FunctionParameterIndexId, &color.r);
 
-                        highlightClass.SetHighlightDistance(process, entity, ConfigValues::GLOW_DISTANCE);
+                        highlightClass.SetHighlightDistance(process, entity, ConfigValues::GLOW_DISTANCE);  
                     }
+
+                    aimbot.SetTargetEntity(target_entity);
                 }
                 else
                 {
                     // Knocked entity
-                    uint32_t FunctionParameterIndexId = 72;
+                    FunctionParameterIndexId = 81;
                     highlightClass.SetHighlightActiveState(process, entity, ContextID, FunctionParameterIndexId);
                     highlightClass.SetHighlightFunctions(process, entity, FunctionParameterIndexId, 137, 125, 1.5f, true, 0, false);
                     
@@ -366,6 +410,8 @@ void Glow::ActivateGlow(rx_handle process, QWORD ClientEntityList, QWORD Sensiti
                 */
             }
         }
+
+    // Pass the valid target_entity to the aimbot
     }
 }
 

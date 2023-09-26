@@ -2,9 +2,6 @@
 #include "../core/utils.hpp"
 
 Radar::Radar() {
-    isSpectatorEnable = ConfigValues::SPECTATOR_COUNT;
-    isRadarEnable = ConfigValues::RADAR;
-
     // Constructor, those values are determined and set once during object construction or initialization. After that, they won't be re-evaluated every time the if statements are encountered. 
 }
 
@@ -123,15 +120,12 @@ void Radar::UpdateRadar(rx_handle process, QWORD ClientEntityList) {
         // Print the radar information
         // clearScreen();
 
-        // Save the cursor position and clear the screen
-        //printf("\e[s\e[H\e[2J\e[3J");
-
         // Save the cursor position
-        printf("\e[s");
+        Utils::saveCursor();
 
         printf("[%s]", nowStr.data());
 
-        if( isSpectatorEnable )
+        if( ConfigValues::SPECTATOR_COUNT == 1 )
         {
             // Print the spectator count
             if (spectatorCount >= 1) {
@@ -141,7 +135,7 @@ void Radar::UpdateRadar(rx_handle process, QWORD ClientEntityList) {
             }
         }
 
-        if ( isRadarEnable ) 
+        if ( ConfigValues::RADAR ) 
         {
             // Determine the color for Min Distance based on new thresholds
             std::string minDistanceColor;
@@ -174,12 +168,8 @@ void Radar::UpdateRadar(rx_handle process, QWORD ClientEntityList) {
                 printf("]\n");
             }
         }
-        
-        // Restore the cursor position
-        printf("\e[u");
 
-        // Clear everything between the saved and restored positions
-        //cleanBetween();     //printf("\e[J");
-        printf("\e[J");
+        Utils::restoreCursor(); // Restore the cursor position
+        Utils::cleanBetween(); // Clear everything between the saved and restored positions
     }
 }

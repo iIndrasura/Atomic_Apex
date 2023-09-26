@@ -74,10 +74,12 @@ void readConfig(std::map<std::string, std::string>& config)
 
 			//No Recoil
 			newConfigFile << "[NORECOIL]" << std::endl;
-			newConfigFile << "NORECOIL_ENABLED=1" << std::endl;
-			//newConfigFile << "NORECOIL_STRENGTH=85.0" << std::endl;
+			newConfigFile << "NORECOIL_ENABLED=0" << std::endl;
+			// newConfigFile << "NORECOIL_STRENGTH=85.0" << std::endl;
 
-            //newConfigFile << "NORECOIL2_ENABLED=0" << std::endl;
+            // newConfigFile << "NORECOIL2_ENABLED=0" << std::endl;
+			// newConfigFile << "NORECOIL3_ENABLED=0" << std::endl;
+
 			newConfigFile << "PitchStrength=50.0" << std::endl;
 			newConfigFile << "YawStrength=80.0" << std::endl;
 

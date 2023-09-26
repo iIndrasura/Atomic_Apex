@@ -15,6 +15,8 @@ float ConfigValues::AIMBOT_MAXDISTANCE = 160.0f;
 
 // NORECOIL Configuration
 int ConfigValues::NORECOIL_ENABLED = 0;
+// int ConfigValues::NORECOIL2_ENABLED = 0;
+// int ConfigValues::NORECOIL3_ENABLED = 0;
 //float ConfigValues::NORECOIL_STRENGTH = 80.0f;
 float ConfigValues::norecoilPitchStrength = 50.0f;
 float ConfigValues::norecoilYawStrength = 50.0f;
@@ -107,6 +109,8 @@ void InitConfigValues(std::map<std::string, std::string>& config)
 
     // NO Recoil
     ConfigValues::NORECOIL_ENABLED = std::stoi(config["NORECOIL.NORECOIL_ENABLED"]);
+    // ConfigValues::NORECOIL2_ENABLED = std::stoi(config["NORECOIL.NORECOIL2_ENABLED"]);
+    // ConfigValues::NORECOIL3_ENABLED = std::stoi(config["NORECOIL.NORECOIL3_ENABLED"]);
     //ConfigValues::NORECOIL_STRENGTH = std::stof(config["NORECOIL.NORECOIL_STRENGTH"]);
     ConfigValues::norecoilPitchStrength = std::stof(config["NORECOIL.PitchStrength"]);
     ConfigValues::norecoilYawStrength = std::stof(config["NORECOIL.YawStrength"]);

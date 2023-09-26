@@ -27,6 +27,8 @@ public:
 
     // NORECOIL Configuration
     static int NORECOIL_ENABLED;
+    // static int NORECOIL2_ENABLED;
+    // static int NORECOIL3_ENABLED;
     //static float NORECOIL_STRENGTH;
     static float norecoilPitchStrength;
     static float norecoilYawStrength;
